@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mochila Cup - Portal de Pago de Inscripción</title>
+    <link rel="icon" type="image/png" href="../Image/favicon.png" />
+    <link rel="stylesheet" href="../Css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="hero small-hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>Confirmación de Inscripción</h1>
+        <p class="subtitle">
+          Complete su registro mediante el abono de la cuota correspondiente.
+        </p>
+      </div>
+    </header>
+
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="/" class="nav-logo">
+          <img src="../Image/logo.png" alt="Logo Pequeño" />
+          <span>MOCHILA CUP</span>
+        </a>
+
+        <div class="nav-menu" id="nav-menu">
+          <a href="/" class="nav-link">Inicio</a>
+          <a href="live.html" class="nav-link live-link">En Vivo</a>
+          <a href="playoffs.html" class="nav-link">Playoffs</a>
+          <a href="table.html" class="nav-link">Tabla</a>
+          <a href="schedule.html" class="nav-link">Horarios</a>
+          <a href="staff.html" class="nav-link">Staff</a>
+          <a href="champion.html" class="nav-link">Campeón</a>
+          <a href="faq.html" class="nav-link disabled-link">FAQ</a>
+        </div>
+
+        <div class="nav-actions">
+          <a
+            href="../Admin/admin.html"
+            id="admin-panel-button"
+            class="nav-action-btn btn-panel hidden disabled-link"
+          >
+            <i class="fas fa-user-shield"></i>
+            <span>Panel</span>
+          </a>
+          <a
+            href="../Admin/login.html"
+            id="login-button"
+            class="nav-action-btn btn-login disabled-link"
+          >
+            <i class="fas fa-sign-in-alt disabled-link"></i>
+            <span>Login</span>
+          </a>
+          <button
+            id="logout-button"
+            class="nav-action-btn btn-logout hidden disabled-link"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <section id="payment" class="container">
+        <div class="payment-header">
+          <h2><i class="fas fa-dollar-sign"></i> Cuota de Inscripción</h2>
+          <p class="price">
+            <strong>S/ 50.00</strong> <span class="currency">PEN</span>
+          </p>
+          <p class="section-description">
+            Valor establecido por equipo. Por favor, seleccione uno de los
+            siguientes <strong>métodos de pago disponibles</strong> para
+            completar su proceso de inscripción.
+          </p>
+        </div>
+
+        <div class="payment-methods">
+          <div class="payment-card yape-card">
+            <h3>Transferencia Vía Yape</h3>
+            <p>
+              Escanee el <strong>código QR</strong> o utilice el número
+              telefónico proporcionado:
+            </p>
+            <div class="qr-code-container">
+              <img
+                src="../Image/qr-yape.png"
+                alt="Código QR de Yape para pago"
+              />
+            </div>
+            <p>Alternativamente, realice la transferencia directa al número:</p>
+            <div class="copyable-field">
+              <strong id="yape-number">+51 952 264 334</strong>
+              <button
+                class="copy-button"
+                data-copy="yape-number"
+                title="Copiar número de Yape"
+              >
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+            <span>(<strong>Josep Antonio Condor Porras</strong>)</span>
+          </div>
+
+          <div class="payment-card bcp-card">
+            <h3>Transferencia Bancaria BCP</h3>
+            <p>
+              Por favor, utilice los siguientes datos para su transferencia
+              bancaria:
+            </p>
+            <div class="copyable-field">
+              <span>N° de Cuenta: </span>
+              <strong id="bcp-cta">19103936252010</strong>
+              <button
+                class="copy-button"
+                data-copy="bcp-cta"
+                title="Copiar número de cuenta BCP"
+              >
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+            <div class="copyable-field">
+              <span>CCI: </span>
+              <strong id="bcp-cci"> 00219110393625201055</strong>
+              <button
+                class="copy-button"
+                data-copy="bcp-cci"
+                title="Copiar Código de Cuenta Interbancario (CCI)"
+              >
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+            <span>(<strong>Josep Antonio Condor Porras</strong>)</span>
+          </div>
+        </div>
+
+        <div class="confirmation-section">
+          <h2>
+            <i class="fas fa-check-circle"></i> Verificación de Pago y Registro
+            Final
+          </h2>
+          <p>
+            Una vez realizado el abono, es
+            <strong>indispensable enviar una captura de pantalla</strong> del
+            comprobante de pago al administrador vía Discord. Este paso es
+            <strong>crucial para la validación de su inscripción</strong> y la
+            <strong>confirmación de su cupo</strong> en el torneo.
+          </p>
+          <a
+            href="https://discord.com/users/839194749444816979"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="cta-button"
+          >
+            <i class="fab fa-discord"></i> Habla con 𝒞𝒽𝑜𝒸𝑜 (Discord)
+          </a>
+
+          <a
+            href="https://www.instagram.com/choco_latito29/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="cta-button"
+          >
+            <i class="fab fa-instagram"></i> Habla con 𝒞𝒽𝑜𝒸𝑜 (Instagram)
+          </a>
+
+          <a
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=mochilac@mochilacup.xyz"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="cta-button"
+          >
+            <i class="fas fa-envelope"></i> Habla con la Administración (Gmail)
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-container">
+        <div class="footer-section footer-about">
+          <img
+            src="../Image/logo.png"
+            alt="Mochila Cup Logo"
+            class="footer-logo"
+          />
+          <p>
+            La Mochila Cup: el escenario donde nacen las leyendas y se forjan
+            campeones. Equipos de toda la comunidad se enfrentan en una
+            competencia que exalta la gloria, el honor y la excelencia en el
+            juego. ¡Prepárate para la acción de Dota 2!
+          </p>
+        </div>
+        <div class="footer-section footer-navigation">
+          <h3>Navegación</h3>
+          <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="live.html">En Vivo</a></li>
+            <li><a href="playoffs.html">Playoffs</a></li>
+            <li><a href="table.html">Tabla</a></li>
+            <li><a href="schedule.html">Horarios</a></li>
+            <li><a href="champion.html">Campeón</a></li>
+            <li><a href="staff.html">Staff</a></li>
+          </ul>
+        </div>
+        <div class="footer-section footer-resources">
+          <h3>Recursos</h3>
+          <ul>
+            <li>
+              <a href="faq.html" class="disabled-link">Preguntas Frecuentes</a>
+            </li>
+            <li>
+              <a href="/reglamento.pdf" target="_blank">Reglamento Oficial</a>
+            </li>
+            <li>
+              <a href="payments.html" class="disabled-link">Metodos de Pago</a>
+            </li>
+            <li><a href="results.html" class="disabled-link">Resumenes</a></li>
+          </ul>
+        </div>
+        <div class="footer-section footer-contact-social">
+          <h3>Conéctate</h3>
+          <div class="social-icons">
+            <a
+              href="https://discord.gg/bHsvghtQHN"
+              target="_blank"
+              title="Servidor de Discord"
+            >
+              <i class="fab fa-discord"></i> Servidor de Discord
+            </a>
+          </div>
+          <p class="contact-email">
+            Correo:
+            <a
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=mochilac@mochilacup.xyz"
+              >mochilac@mochilacup.xyz</a
+            >
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          © <span id="year"></span> Mochila Cup. Todos los derechos reservados.
+        </p>
+      </div>
+    </footer>
+
+    <div id="copyModal" class="modals-overlays">
+      <div class="modal-contentCoppy">
+        <h3>¡Copiado al Portapapeles! <span id="modalCopiedText"></span></h3>
+        <button class="close-button">Aceptar</button>
+      </div>
+    </div>
+
+    <!-- <audio
+      id="background-music"
+      src="../Music/victory.mp3"
+      loop
+      autoplay
+      hidden
+    >
+      Tu navegador no soporta el elemento de audio.
+    </audio> -->
+
+    <script src="../Js/main.js"></script>
+    <script src="../Js/index.js"></script>
+    <script src="../Js/payments.js"></script>
+  </body>
+</html>

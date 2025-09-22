@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mochila Cup - Panel de Administración</title>
+    <link rel="icon" type="image/png" href="../Image/favicon.png" />
+    <link rel="stylesheet" href="../Css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="hero small-hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>Panel de Administración</h1>
+      </div>
+    </header>
+
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="/" class="nav-logo">
+          <img src="../Image/logo.png" alt="Logo Pequeño" />
+          <span>MOCHILA CUP</span>
+        </a>
+        <div class="nav-actions">
+          <a
+            href="/"
+            class="nav-link admin-button"
+            style="background-color: var(--primary-blue)"
+          >
+            <i class="fas fa-home"></i> Home
+          </a>
+          <button
+            id="logout-button"
+            class="nav-link admin-button"
+            style="background-color: var(--primary-red-dark)"
+          >
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <div class="admin-container container">
+        <section id="card-partidas" class="admin-card">
+          <h2 class="admin-card-title">
+            <i class="fas fa-gamepad"></i> Este torneo ha concluido
+          </h2>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <p>
+        © <span id="year"></span> Mochila Cup. Todos los derechos reservados.
+      </p>
+    </footer>
+
+    <script src="../Js/main.js"></script>
+    <script src="../Admin/admin.js"></script>
+  </body>
+</html>

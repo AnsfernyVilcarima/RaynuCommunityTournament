@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mochila Cup - El Campeón</title>
+    <link rel="icon" type="image/png" href="../Image/favicon.png" />
+    <link rel="stylesheet" href="../Css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="hero small-hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>¡Los Indiscutibles Campeones!</h1>
+        <p class="subtitle">
+          Con orgullo presentamos al equipo que se alzó con la gloria en la
+          Mochila Cup.
+        </p>
+      </div>
+    </header>
+
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="/" class="nav-logo">
+          <img src="../Image/logo.png" alt="Logo Pequeño" />
+          <span>MOCHILA CUP</span>
+        </a>
+        <div class="nav-menu" id="nav-menu">
+          <a href="/" class="nav-link">Inicio</a>
+          <a href="live.html" class="nav-link live-link">En Vivo</a>
+          <a href="playoffs.html" class="nav-link">Playoffs</a>
+          <a href="table.html" class="nav-link">Tabla</a>
+          <a href="schedule.html" class="nav-link">Horarios</a>
+          <a href="staff.html" class="nav-link">Staff</a>
+          <a href="champion.html" class="nav-link active">Campeón</a>
+          <a href="faq.html" class="nav-link disabled-link">FAQ</a>
+        </div>
+        <div class="nav-actions">
+          <a
+            href="../Admin/admin.html"
+            id="admin-panel-button"
+            class="nav-action-btn btn-panel hidden disabled-link"
+          >
+            <i class="fas fa-user-shield"></i>
+            <span>Panel</span>
+          </a>
+          <a
+            href="../Admin/login.html"
+            id="login-button"
+            class="nav-action-btn btn-login disabled-link"
+          >
+            <i class="fas fa-sign-in-alt disabled-link"></i>
+            <span>Login</span>
+          </a>
+          <button
+            id="logout-button"
+            class="nav-action-btn btn-logout hidden disabled-link"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="champion-page">
+      <section class="container section champion-presentation">
+        <div class="champion-hero-image"></div>
+        <div class="champion-trophy-container">
+          <div class="team-avatar-banner">
+            <img
+              src="../Image/Teams/Palomalandia/palomas.png"
+              alt="Logo del equipo campeón"
+              class="champion-team-logo-main"
+            />
+          </div>
+          <h2 class="champion-team-name">Palomalandia Team</h2>
+          <p class="champion-quote">
+            "Táctica, vuelo y precisión. ¡Palomalandia Team se alza con la
+            victoria!"
+          </p>
+        </div>
+      </section>
+
+      <section class="container section champion-team-section">
+        <h3 class="section-title">El Streamer</h3>
+        <div class="streamer-card-container">
+          <div class="streamer-card">
+            <img
+              src="../Image/sdrawni.png"
+              alt="Avatar del Streamer JMordekay"
+              class="streamer-photo"
+            />
+            <div class="streamer-info">
+              <h4 class="streamer-name">Sdrawnl</h4>
+              <p class="streamer-role">Streamer de la Gran Final</p>
+              <p class="streamer-bio">
+                El cerebro detrás de las transmisiones y el apoyo incondicional
+                del equipo campeón.
+              </p>
+              <div class="streamer-social-links">
+                <a
+                  href="https://kick.com/sdrawnl"
+                  target="_blank"
+                  class="social-link kick"
+                  ><i class="fab fa-kickstarter-k"></i> Kick</a
+                >
+                <!--- <a href="#" target="_blank" class="social-link twitter"
+                  ><i class="fab fa-twitter"></i> Twitter</a
+                >
+                <a href="#" target="_blank" class="social-link twitch"
+                  ><i class="fab fa-twitch"></i> Twitch</a
+                > --->
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3 class="section-title players-title">Los Jugadores</h3>
+        <p class="section-subtitle">
+          Los jugadores que hicieron posible la gloria.
+        </p>
+        <div class="team-members-grid players-grid">
+          <div class="member-card player">
+            <img
+              src="../Image/Champion/Sdraunl.gif"
+              alt="PL Sdrawnl Avatar"
+              class="member-photo"
+            />
+            <h4 class="member-name">PL Sdrawnl</h4>
+            <span class="member-role">Jugador</span>
+          </div>
+          <div class="member-card player">
+            <img
+              src="../Image/Champion/patatas.png"
+              alt="PL Sr.PATATAS Avatar"
+              class="member-photo"
+            />
+            <h4 class="member-name">PL Sr.PATATAS</h4>
+            <span class="member-role">Jugador</span>
+          </div>
+          <div class="member-card player">
+            <img
+              src="../Image/Champion/Chapiie.png"
+              alt="PL Chapiie Avatar"
+              class="member-photo"
+            />
+            <h4 class="member-name">PL Chapiie</h4>
+            <span class="member-role">Jugador</span>
+          </div>
+          <div class="member-card player">
+            <img
+              src="../Image/Champion/papachon.gif"
+              alt="PL PaPaCh0n(twicth) Avatar"
+              class="member-photo"
+            />
+            <h4 class="member-name">PL PaPaCh0n</h4>
+            <span class="member-role">Jugador</span>
+          </div>
+          <div class="member-card player">
+            <img
+              src="../Image/Champion/pain.png"
+              alt="PL Pain Avatar"
+              class="member-photo"
+            />
+            <h4 class="member-name">PL Pain</h4>
+            <span class="member-role">Jugador</span>
+          </div>
+          <div class="member-card player sub">
+            <img
+              src="../Image/Champion/bald.png"
+              alt="PL I am a bald Avatar"
+              class="member-photo"
+            />
+            <h4 class="member-name">PL I am a bald</h4>
+            <span class="member-role">Suplente</span>
+          </div>
+          <div class="member-card player sub">
+            <img
+              src="../Image/Champion/dueh.png"
+              alt="PL Dueh Avatar"
+              class="member-photo"
+            />
+            <h4 class="member-name">PL Dueh</h4>
+            <span class="member-role">Suplente</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="container section stats-infographic-section">
+        <h3 class="section-title">Estadísticas Clave del Campeón</h3>
+        <p class="section-subtitle">
+          Un vistazo al rendimiento que los llevó a la cima.
+        </p>
+        <div class="stats-infographic-grid">
+          <div class="stat-circle">
+            <div class="circle-inner" data-percentage="93">
+              <span class="stat-value">0%</span>
+            </div>
+            <p class="stat-label">Win Rate</p>
+          </div>
+          <div class="stat-bar">
+            <p class="bar-label">MMR Promedio del Equipo</p>
+            <div class="bar-container">
+              <div class="bar-fill" data-percentage="80">
+                <p class="bar-text">~6428 MMR</p>
+              </div>
+            </div>
+            <p class="mmr-list">(Medalla Aproximada: Divino Alto)</p>
+          </div>
+          <div class="stat-text">
+            <i class="fas fa-chart-bar"></i>
+            <span>Héroe más jugado:<br /><strong>Pudge</strong></span>
+          </div>
+          <div class="stat-text">
+            <i class="fas fa-trophy"></i>
+            <span>Victorias totales:<br /><strong>14</strong></span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-container">
+        <div class="footer-section footer-about">
+          <img
+            src="../Image/logo.png"
+            alt="Mochila Cup Logo"
+            class="footer-logo"
+          />
+          <p>
+            La Mochila Cup: el escenario donde nacen las leyendas y se forjan
+            campeones. Equipos de toda la comunidad se enfrentan en una
+            competencia que exalta la gloria, el honor y la excelencia en el
+            juego. ¡Prepárate para la acción de Dota 2!
+          </p>
+        </div>
+        <div class="footer-section footer-navigation">
+          <h3>Navegación</h3>
+          <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="live.html">En Vivo</a></li>
+            <li><a href="playoffs.html">Playoffs</a></li>
+            <li><a href="table.html">Tabla</a></li>
+            <li><a href="schedule.html">Horarios</a></li>
+            <li><a href="champion.html">Campeón</a></li>
+            <li><a href="staff.html">Staff</a></li>
+          </ul>
+        </div>
+        <div class="footer-section footer-resources">
+          <h3>Recursos</h3>
+          <ul>
+            <li>
+              <a href="faq.html" class="disabled-link">Preguntas Frecuentes</a>
+            </li>
+            <li>
+              <a href="/reglamento.pdf" target="_blank">Reglamento Oficial</a>
+            </li>
+            <li>
+              <a href="payments.html" class="disabled-link">Metodos de Pago</a>
+            </li>
+            <li><a href="results.html" class="disabled-link">Resumenes</a></li>
+          </ul>
+        </div>
+        <div class="footer-section footer-contact-social">
+          <h3>Conéctate</h3>
+          <div class="social-icons">
+            <a
+              href="https://discord.gg/bHsvghtQHN"
+              target="_blank"
+              title="Servidor de Discord"
+            >
+              <i class="fab fa-discord"></i> Servidor de Discord
+            </a>
+          </div>
+          <p class="contact-email">
+            Correo:
+            <a
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=mochilac@mochilacup.xyz"
+              >mochilac@mochilacup.xyz</a
+            >
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          © <span id="year"></span> Mochila Cup. Todos los derechos reservados.
+        </p>
+      </div>
+    </footer>
+
+    <script src="../Js/main.js"></script>
+    <script src="../Js/index.js"></script>
+    <script src="../Js/champion.js"></script>
+  </body>
+</html>

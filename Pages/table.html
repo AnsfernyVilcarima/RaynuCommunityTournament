@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mochila Cup - Tabla de Puntuación</title>
+    <link rel="icon" type="image/png" href="../Image/favicon.png" />
+    <link rel="stylesheet" href="../Css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="hero small-hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>Tabla de Puntuación</h1>
+        <p class="subtitle">
+          Sigue en tiempo real el desempeño de cada equipo en la fase de grupos.
+        </p>
+      </div>
+    </header>
+
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="/" class="nav-logo">
+          <img src="../Image/logo.png" alt="Logo Pequeño" />
+          <span>MOCHILA CUP</span>
+        </a>
+
+        <div class="nav-menu" id="nav-menu">
+          <a href="/" class="nav-link">Inicio</a>
+          <a href="live.html" class="nav-link live-link">En Vivo</a>
+          <a href="playoffs.html" class="nav-link">Playoffs</a>
+          <a href="table.html" class="nav-link active">Tabla</a>
+          <a href="schedule.html" class="nav-link">Horarios</a>
+          <a href="staff.html" class="nav-link">Staff</a>
+          <a href="champion.html" class="nav-link">Campeón</a>
+          <a href="faq.html" class="nav-link disabled-link">FAQ</a>
+        </div>
+
+        <div class="nav-actions">
+          <a
+            href="../Admin/admin.html"
+            id="admin-panel-button"
+            class="nav-action-btn btn-panel hidden disabled-link"
+          >
+            <i class="fas fa-user-shield"></i>
+            <span>Panel</span>
+          </a>
+
+          <a
+            href="../Admin/login.html"
+            id="login-button"
+            class="nav-action-btn btn-login disabled-link"
+          >
+            <i class="fas fa-sign-in-alt disabled-link"></i>
+            <span>Login</span>
+          </a>
+
+          <button
+            id="logout-button"
+            class="nav-action-btn btn-logout hidden disabled-link"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <section id="scoreboard-section" class="container section">
+        <h2 class="section-title">
+          <i class="fas fa-chart-bar"></i> Clasificación de Grupos
+        </h2>
+        <p class="section-description">
+          Aquí puedes ver la tabla de posiciones actualizada para cada grupo.
+          Los equipos con más puntos avanzarán a la fase de playoffs.
+        </p>
+        <div class="scoreboard-container" id="scoreboard-tables-container">
+          <div class="group">
+            <h3>Grupo A</h3>
+            <table class="scoreboard-table">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Equipo</th>
+                  <th>PG</th>
+                  <th>PP</th>
+                  <th>PTS</th>
+                </tr>
+              </thead>
+              <tbody id="group-a-body"></tbody>
+            </table>
+          </div>
+          <div class="group">
+            <h3>Grupo B</h3>
+            <table class="scoreboard-table">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Equipo</th>
+                  <th>PG</th>
+                  <th>PP</th>
+                  <th>PTS</th>
+                </tr>
+              </thead>
+              <tbody id="group-b-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="scoreboard-empty-message" class="no-teams-message hidden">
+          <i class="fas fa-shield-alt"></i>
+          <p>Los equipos contendientes serán revelados próximamente.</p>
+        </div>
+
+        <div class="section-cta" style="text-align: center; margin-top: 4rem">
+          <p class="section-description">
+            ¿Quieres saber cuándo juegan los equipos o ver el bracket de
+            playoffs?
+          </p>
+          <a href="schedule.html" class="cta-button disabled-link"
+            >Ver Horarios de Partidas</a
+          >
+          <a href="playoffs.html" class="cta-button secondary"
+            >Ver Bracket de Playoffs</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-container">
+        <div class="footer-section footer-about">
+          <img
+            src="../Image/logo.png"
+            alt="Mochila Cup Logo"
+            class="footer-logo"
+          />
+          <p>
+            La Mochila Cup: el escenario donde nacen las leyendas y se forjan
+            campeones. Equipos de toda la comunidad se enfrentan en una
+            competencia que exalta la gloria, el honor y la excelencia en el
+            juego. ¡Prepárate para la acción de Dota 2!
+          </p>
+        </div>
+
+        <div class="footer-section footer-navigation">
+          <h3>Navegación</h3>
+          <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="live.html">En Vivo</a></li>
+            <li><a href="playoffs.html">Playoffs</a></li>
+            <li><a href="table.html">Tabla</a></li>
+            <li><a href="schedule.html">Horarios</a></li>
+            <li><a href="champion.html">Campeón</a></li>
+            <li><a href="staff.html">Staff</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section footer-resources">
+          <h3>Recursos</h3>
+          <ul>
+            <li>
+              <a href="faq.html" class="disabled-link">Preguntas Frecuentes</a>
+            </li>
+            <li>
+              <a href="/reglamento.pdf" target="_blank">Reglamento Oficial</a>
+            </li>
+            <li>
+              <a href="payments.html" class="disabled-link">Metodos de Pago</a>
+            </li>
+            <li>
+              <a href="results.html" class="disabled-link">Resumenes</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer-section footer-contact-social">
+          <h3>Conéctate</h3>
+          <div class="social-icons">
+            <a
+              href="https://discord.gg/bHsvghtQHN"
+              target="_blank"
+              title="Servidor de Discord"
+            >
+              <i class="fab fa-discord"></i> Servidor de Discord
+            </a>
+          </div>
+          <p class="contact-email">
+            Correo:
+            <a
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=mochilac@mochilacup.xyz"
+              >mochilac@mochilacup.xyz</a
+            >
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          © <span id="year"></span> Mochila Cup. Todos los derechos reservados.
+        </p>
+      </div>
+    </footer>
+
+    <!-- <audio
+      id="background-music"
+      src="../Music/victory.mp3"
+      loop
+      autoplay
+      hidden
+    >
+      Tu navegador no soporta el elemento de audio.
+    </audio> -->
+
+    <script src="../Js/index.js"></script>
+    <script src="../Js/main.js"></script>
+    <script src="../Js/table.js"></script>
+  </body>
+</html>

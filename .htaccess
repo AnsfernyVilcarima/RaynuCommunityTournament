@@ -1,0 +1,129 @@
+Options -Indexes
+DirectoryIndex Pages/index.html
+
+# --- Configuración para la página de error 404 ---
+
+ErrorDocument 404 /Pages/404.html
+
+# Activa el motor de reescritura de URLs
+
+RewriteEngine On
+
+# --- Fuerza HTTPS (siempre primero para la seguridad) ---
+
+RewriteCond %{HTTPS} off
+RewriteRule ^(.\*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# --- REDIRECCIONES PERMANENTES (301) para URLs antiguas a URLs amigables en inglés ---
+
+# Estas reglas fuerzan al navegador a mostrar la URL limpia y en inglés.
+
+# Se aplican si el navegador solicita /archivo.html, /Pages/archivo.html, /Admin/archivo.html
+
+RewriteCond %{THE_REQUEST} ^._/index.html
+RewriteRule ^(._)index.html$ https://www.mochilacup.xyz/$1 [R=301,L]
+
+# 1. Redirige /Pages/index.html a la raíz "/"
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /Pages/index\.html\ HTTP/ [NC]
+RewriteRule ^Pages/index\.html$ / [R=301,L]
+
+# 2. Redirige URLs con .html o con carpetas a su versión limpia y en inglés (ej. /Pages/champion.html -> /champion)
+
+# Estas reglas se aplican si la URL contiene .html o la carpeta Pages/ o Admin/
+
+# Para champion.html -> /champion
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(?:Pages/)?champion\.html\ HTTP/ [NC]
+RewriteRule ^(?:Pages/)?champion\.html$ /champion [R=301,L,NC]
+
+# Para faq.html -> /faq (ya estaba en inglés)
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(?:Pages/)?faq\.html\ HTTP/ [NC]
+RewriteRule ^(?:Pages/)?faq\.html$ /faq [R=301,L,NC]
+
+# Para live.html -> /live (ya estaba en inglés)
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(?:Pages/)?live\.html\ HTTP/ [NC]
+RewriteRule ^(?:Pages/)?live\.html$ /live [R=301,L,NC]
+
+# Para payments.html -> /payments
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(?:Pages/)?payments\.html\ HTTP/ [NC]
+RewriteRule ^(?:Pages/)?payments\.html$ /payments [R=301,L,NC]
+
+# Para playoffs.html -> /playoffs (ya estaba en inglés)
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(?:Pages/)?playoffs\.html\ HTTP/ [NC]
+RewriteRule ^(?:Pages/)?playoffs\.html$ /playoffs [R=301,L,NC]
+
+# Para schedule.html -> /schedule (NUEVO CAMBIO)
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(?:Pages/)?schedule\.html\ HTTP/ [NC]
+RewriteRule ^(?:Pages/)?schedule\.html$ /schedule [R=301,L,NC]
+
+# Para staff.html -> /staff (ya estaba en inglés)
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(?:Pages/)?staff\.html\ HTTP/ [NC]
+RewriteRule ^(?:Pages/)?staff\.html$ /staff [R=301,L,NC]
+
+# Para table.html -> /table (NUEVO CAMBIO)
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(?:Pages/)?table\.html\ HTTP/ [NC]
+RewriteRule ^(?:Pages/)?table\.html$ /table [R=301,L,NC]
+
+# Para admin.html -> /admin (ya estaba en inglés)
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(?:Admin/)?admin\.html\ HTTP/ [NC]
+RewriteRule ^(?:Admin/)?admin\.html$ /admin [R=301,L,NC]
+
+# Para login.html -> /login (ya estaba en inglés)
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(?:Admin/)?login\.html\ HTTP/ [NC]
+RewriteRule ^(?:Admin/)?login\.html$ /login [R=301,L,NC]
+
+# Para Torneo Dota 2 PDF -> /Docs/Torneo%20Dota%202.pdf (versión limpia a ruta real)
+RewriteRule ^reglamento\.pdf$ Docs/reglamento.pdf [NC,L]
+
+
+# --- Mapeo Interno de URLs Amigables a Archivos Reales ---
+
+# Estas reglas son para el SERVIDOR. Traducen la URL amigable limpia a la ruta real del archivo.
+
+# Se aplican SOLO si la URL solicitada NO es un archivo o directorio real (para CSS, JS, imágenes).
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Mapea la raíz "/" a Pages/index.html
+
+RewriteRule ^$ Pages/index.html [NC,L]
+
+# Páginas de la carpeta 'Pages/' (versión limpia en inglés a ruta real)
+
+RewriteRule ^champion/?$ Pages/champion.html [NC,L] # CAMBIADO
+RewriteRule ^faq/?$ Pages/faq.html [NC,L]
+RewriteRule ^live/?$ Pages/live.html [NC,L]
+RewriteRule ^payments/?$ Pages/payments.html [NC,L]
+RewriteRule ^playoffs/?$ Pages/playoffs.html [NC,L]
+RewriteRule ^schedule/?$ Pages/schedule.html [NC,L] # CAMBIADO
+RewriteRule ^staff/?$ Pages/staff.html [NC,L]
+RewriteRule ^table/?$ Pages/table.html [NC,L] # CAMBIADO
+
+# Páginas de la carpeta 'Admin/' (versión limpia en inglés a ruta real)
+
+RewriteRule ^admin/?$ Admin/admin.html [NC,L]
+RewriteRule ^login/?$ Admin/login.html [NC,L]
+
+# Y para la redirección permanente (301) desde la URL antigua si alguien la usa
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /Docs/Torneo%20Dota%202\.pdf\ HTTP/ [NC]
+RewriteRule ^Docs/Torneo%20Dota%202\.pdf$ /Torneo%20Dota%202.pdf [R=301,L,NC]
+
+# php -- BEGIN cPanel-generated handler, do not edit
+
+# Set the “ea-php83” package as the default “PHP” programming language.
+
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php83 .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit

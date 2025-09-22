@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mochila Cup - Staff</title>
+    <link rel="icon" type="image/png" href="../Image/favicon.png" />
+    <link rel="stylesheet" href="../Css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="hero small-hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>Nuestro Equipo y Colaboradores</h1>
+        <p class="subtitle">
+          Conoce a las personas y entidades que hacen posible la Mochila Cup.
+        </p>
+      </div>
+    </header>
+
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="/" class="nav-logo">
+          <img src="../Image/logo.png" alt="Logo Pequeño" />
+          <span>MOCHILA CUP</span>
+        </a>
+
+        <div class="nav-menu" id="nav-menu">
+          <a href="/" class="nav-link">Inicio</a>
+          <a href="live.html" class="nav-link live-link">En Vivo</a>
+          <a href="playoffs.html" class="nav-link">Playoffs</a>
+          <a href="table.html" class="nav-link">Tabla</a>
+          <a href="schedule.html" class="nav-link">Horarios</a>
+          <a href="staff.html" class="nav-link active">Staff</a>
+          <a href="champion.html" class="nav-link">Campeón</a>
+          <a href="faq.html" class="nav-link disabled-link">FAQ</a>
+        </div>
+
+        <div class="nav-actions">
+          <a
+            href="../Admin/admin.html"
+            id="admin-panel-button"
+            class="nav-action-btn btn-panel hidden disabled-link"
+          >
+            <i class="fas fa-user-shield"></i>
+            <span>Panel</span>
+          </a>
+
+          <a
+            href="../Admin/login.html"
+            id="login-button"
+            class="nav-action-btn btn-login disabled-link"
+          >
+            <i class="fas fa-sign-in-alt disabled-link"></i>
+            <span>Login</span>
+          </a>
+
+          <button
+            id="logout-button"
+            class="nav-action-btn btn-logout hidden disabled-link"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <section id="staff-section">
+        <div class="staff-category">
+          <h3 class="category-title">
+            <i class="fab fa-kickstarter-k"></i> Streamers Participantes (Kick)
+          </h3>
+          <div class="staff-grid grid-layout-4">
+            <div class="staff-card">
+              <div class="card-header">
+                <img
+                  src="../Image/serenaMegami.png"
+                  alt="streamers"
+                  class="is-logo"
+                />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">SerenaMegami</h4>
+                <p class="card-role">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/serenamegami" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img
+                  src="../Image/sunakitoVT.png"
+                  alt="streamers"
+                  class="is-logo"
+                />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">SunakitoVT</h4>
+                <p class="card-role">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/sunakitovt" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img src="../Image/Yinga.png" alt="streamers" class="is-logo" />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">Yinga</h4>
+                <p class="card-role">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/yinga" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img
+                  src="../Image/sannet.png"
+                  alt="streamers"
+                  class="is-logo"
+                />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">Sannet</h4>
+                <p class="card-role">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/sannet" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img src="../Image/joss.png" alt="streamers" class="is-logo" />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">JossLolii</h4>
+                <p class="card-role">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/josslolii" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img src="../Image/nara.png" alt="streamers" class="is-logo" />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">nara_gen</h4>
+                <p class="card-role">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/nara_gen" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img src="../Image/livel.png" alt="streamers" class="is-logo" />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">LIVEL_zn</h4>
+                <p class="card-role">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/livel_zn" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img
+                  src="../Image/sdrawni.png"
+                  alt="streamers"
+                  class="is-logo"
+                />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">Sdrawnl</h4>
+                <p class="card-role">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/sdrawnl" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img src="../Image/onwi.png" alt="streamers" class="is-logo" />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">TioOnwi</h4>
+                <p class="card-role">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/tioonwi" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img src="../Image/kael.png" alt="streamers" class="is-logo" />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">kaelGGLive</h4>
+                <p class="card-role">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/kaelgglive" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img
+                  src="../Image/streamer.png"
+                  alt="streamers"
+                  class="is-logo"
+                />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name tachado">Streamer 11</h4>
+                <p class="card-role tachado">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="#" class="social-icon disabled-link"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+            <div class="staff-card">
+              <div class="card-header">
+                <img
+                  src="../Image/streamer.png"
+                  alt="streamers"
+                  class="is-logo"
+                />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name tachado">Streamer 12</h4>
+                <p class="card-role tachado">Canal de Kick</p>
+              </div>
+              <div class="card-footer">
+                <a href="#" class="social-icon disabled-link"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="staff-category">
+          <h3 class="category-title">
+            <i class="fas fa-users-cog"></i> Organizadores del Torneo
+          </h3>
+          <div class="staff-grid grid-layout-2">
+            <div class="staff-card">
+              <div class="card-header">
+                <img src="../Image/Alee.png" alt="Foto de Skinny_A" />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">Skinny_A</h4>
+                <p class="card-role">Organizadora Principal</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/skinny_a" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+                <a href="https://www.instagram.com/alepx3" class="social-icon"
+                  ><i class="fab fa-instagram"></i
+                ></a>
+                <a
+                  href="https://www.tiktok.com/@alexsap_3?_t=ZM-8xyW5iECbwb&_r=1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon"
+                  title="TikTok"
+                >
+                  <i class="fab fa-tiktok"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="staff-card">
+              <div class="card-header">
+                <img src="../Image/jmodekay.png" alt="Foto de JMordekay" />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">JMordekay</h4>
+                <p class="card-role">Organizador Secundario</p>
+              </div>
+              <div class="card-footer">
+                <a href="https://kick.com/jmordekay" class="social-icon"
+                  ><i class="fab fa-kickstarter-k"></i
+                ></a>
+                <a href="https://x.com/j_mordekay" class="social-icon"
+                  ><i class="fab fa-twitter"></i
+                ></a>
+                <a
+                  href="https://www.instagram.com/j.mordekay"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon"
+                  title="Instagram"
+                >
+                  <i class="fab fa-instagram"></i>
+                </a>
+                <a
+                  href="https://www.youtube.com/@JMordeKay"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon"
+                  title="YouTube"
+                >
+                  <i class="fab fa-youtube"></i>
+                </a>
+                <a
+                  href="https://www.tiktok.com/@jmordekay"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon"
+                  title="TikTok"
+                >
+                  <i class="fab fa-tiktok"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="staff-category">
+          <h3 class="category-title">
+            <i class="fas fa-code"></i> Creadores y Editores
+          </h3>
+          <div class="staff-grid grid-layout-2">
+            <div class="staff-card">
+              <div class="card-header">
+                <img src="../Image/frofile.png" alt="Foto de 𝒞𝒽𝑜𝒸𝑜" />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">𝒞𝒽𝑜𝒸𝑜</h4>
+                <p class="card-role">Creador y Diseño de la Página Web</p>
+              </div>
+              <div class="card-footer">
+                <a
+                  href="https://kick.com/choco-latito029"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon"
+                  title="Kick"
+                >
+                  <i class="fab fa-kickstarter-k"></i>
+                </a>
+                <a
+                  href="https://www.instagram.com/choco_latito29/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon"
+                  title="Instagram"
+                >
+                  <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://x.com/choco_latito29" class="social-icon"
+                  ><i class="fab fa-twitter"></i
+                ></a>
+                <a
+                  href="https://www.paypal.me/choquto21"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon"
+                  title="PayPal"
+                >
+                  <i class="fab fa-paypal"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="staff-card">
+              <div class="card-header">
+                <img src="../Image/maiki.png" alt="Foto de Maiki" />
+              </div>
+              <div class="card-body">
+                <h4 class="card-name">Maiki</h4>
+                <p class="card-role">Creador de Logos y Anuncios</p>
+              </div>
+              <div class="card-footer">
+                <a
+                  href="https://kick.com/maicki"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon"
+                  title="Kick"
+                >
+                  <i class="fab fa-kickstarter-k"></i>
+                </a>
+                <a
+                  href="https://www.instagram.com/unjuguitomas/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon"
+                  title="Instagram"
+                >
+                  <i class="fab fa-instagram"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="staff-category">
+          <h3 class="category-title">
+            <i class="fas fa-info-circle"></i> Datos Relevantes
+          </h3>
+          <div class="staff-grid grid-layout-2">
+            <div class="info-card">
+              <h4>Comunidad de Discord</h4>
+              <p>
+                Únete a nuestra comunidad para no perderte ninguna novedad y
+                participar activamente.
+              </p>
+              <a
+                href="https://discord.gg/bHsvghtQHN"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="cta-button btn-discord-secondary"
+              >
+                <i class="fab fa-discord"></i> Servidor de Discord
+              </a>
+            </div>
+
+            <div class="info-card">
+              <h4>Reglas y Normas</h4>
+              <p>
+                Es fundamental que todos los participantes conozcan el
+                reglamento oficial del torneo.
+              </p>
+              <a
+                href="/reglamento.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="cta-button btn-rules"
+              >
+                <i class="fas fa-book"></i> Leer Reglas
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-container">
+        <div class="footer-section footer-about">
+          <img
+            src="../Image/logo.png"
+            alt="Mochila Cup Logo"
+            class="footer-logo"
+          />
+          <p>
+            La Mochila Cup: el escenario donde nacen las leyendas y se forjan
+            campeones. Equipos de toda la comunidad se enfrentan en una
+            competencia que exalta la gloria, el honor y la excelencia en el
+            juego. ¡Prepárate para la acción de Dota 2!
+          </p>
+        </div>
+
+        <div class="footer-section footer-navigation">
+          <h3>Navegación</h3>
+          <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="live.html">En Vivo</a></li>
+            <li><a href="playoffs.html">Playoffs</a></li>
+            <li><a href="table.html">Tabla</a></li>
+            <li><a href="schedule.html">Horarios</a></li>
+            <li><a href="champion.html">Campeón</a></li>
+            <li><a href="staff.html">Staff</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section footer-resources">
+          <h3>Recursos</h3>
+          <ul>
+            <li>
+              <a href="faq.html" class="disabled-link">Preguntas Frecuentes</a>
+            </li>
+            <li>
+              <a href="/reglamento.pdf" target="_blank">Reglamento Oficial</a>
+            </li>
+            <li>
+              <a href="payments.html" class="disabled-link">Metodos de Pago</a>
+            </li>
+            <li><a href="results.html" class="disabled-link">Resumenes</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section footer-contact-social">
+          <h3>Conéctate</h3>
+          <div class="social-icons">
+            <a
+              href="https://discord.gg/bHsvghtQHN"
+              target="_blank"
+              title="Servidor de Discord"
+            >
+              <i class="fab fa-discord"></i> Servidor de Discord
+            </a>
+          </div>
+          <p class="contact-email">
+            Correo:
+            <a
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=mochilac@mochilacup.xyz"
+              >mochilac@mochilacup.xyz</a
+            >
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          © <span id="year"></span> Mochila Cup. Todos los derechos reservados.
+        </p>
+      </div>
+    </footer>
+
+    <!-- <audio
+      id="background-music"
+      src="../Music/victory.mp3"
+      loop
+      autoplay
+      hidden
+    >
+      Tu navegador no soporta el elemento de audio.
+    </audio> -->
+
+    <script src="../Js/main.js"></script>
+    <script src="../Js/index.js"></script>
+  </body>
+</html>
