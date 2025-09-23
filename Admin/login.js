@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://api.mochilacup.xyz/api";
+  const API_URL = "https://api.raynucommunitytournament.xyz/api";
 
   const loginForm = document.getElementById("login-form");
   const messageBox = document.getElementById("login-message");

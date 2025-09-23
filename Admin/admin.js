@@ -6,8 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- 1. CONFIGURACIÓN Y ESTADO GLOBAL ---
     // =================================================================
     const config = {
-      API_URL: "https://api.mochilacup.xyz/api",
-      SERVER_BASE_URL: "https://api.mochilacup.xyz",
+      API_URL: "https://api.raynucommunitytournament.xyz/api",
+      SERVER_BASE_URL: "https://api.raynucommunitytournament.xyz",
     };
 
     const state = {

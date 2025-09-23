@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Script de la página de inicio (index.js) cargado.");
 
-  const API_BASE_URL = "https://api.mochilacup.xyz/api";
-  const SERVER_BASE_URL = "https://api.mochilacup.xyz";
+  const API_BASE_URL = "https://api.raynucommunitytournament.xyz/api";
+  const SERVER_BASE_URL = "https://api.raynucommunitytournament.xyz";
   const DEFAULT_TEAM_LOGO = "../Image/team.png";
   const DEFAULT_CASTER_PHOTO = "../Image/caster.png";
 

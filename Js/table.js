@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://api.mochilacup.xyz/api";
-  const SERVER_BASE_URL = "https://api.mochilacup.xyz";
+  const API_URL = "https://api.raynucommunitytournament.xyz/api";
+  const SERVER_BASE_URL = "https://api.raynucommunitytournament.xyz";
 
   const groupABody = document.getElementById("group-a-body");
   const groupBBody = document.getElementById("group-b-body");
