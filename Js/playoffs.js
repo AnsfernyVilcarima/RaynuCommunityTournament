@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://api.mochilacup.xyz/api";
-  const SERVER_BASE_URL = "https://api.mochilacup.xyz";
+  const API_URL = "https://api.raynucommunitytournament.xyz/api";
+  const SERVER_BASE_URL = "https://api.raynucommunitytournament.xyz";
   const bracketContainer = document.getElementById("bracket-container");
   const loader = document.getElementById("loader");
 
