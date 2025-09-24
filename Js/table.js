@@ -1,19 +1,45 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const config = window.__RAYNU_CONFIG__ || {};
+  const client = window.RaynuClient || null;
+  const fallbackAssets = {
+    teamLogo: "../Image/team.png",
+  };
+
+  const fallbackFetch = async (endpoint) => {
+    const response = await fetch(endpoint);
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+    return response.json();
+  };
+
   const fetchApiData =
-    typeof config.fetchApiData === "function"
-      ? config.fetchApiData
-      : async (endpoint) => {
-          const response = await fetch(endpoint);
-          if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-          }
-          return response.json();
-        };
+    client && typeof client.fetchApiData === "function"
+      ? (endpoint) => client.fetchApiData(endpoint)
+      : fallbackFetch;
+
   const resolveMediaUrl =
-    typeof config.resolveMediaUrl === "function"
-      ? config.resolveMediaUrl
+    client && typeof client.resolveMediaUrl === "function"
+      ? (assetPath) => client.resolveMediaUrl(assetPath)
       : (assetPath) => assetPath || "";
+
+  const getDefaultAsset = (key) => {
+    if (client && typeof client.getDefaultAsset === "function") {
+      const value = client.getDefaultAsset(key);
+      if (value) return value;
+    }
+    return fallbackAssets[key] || "";
+  };
+
+  const withDefaultAsset =
+    client && typeof client.withDefault === "function"
+      ? (assetPath, key) =>
+          client.withDefault(assetPath, key) || getDefaultAsset(key)
+      : (assetPath, key) => {
+          const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+          return resolved || getDefaultAsset(key);
+        };
+
+  const DEFAULT_TEAM_LOGO = getDefaultAsset("teamLogo");
 
   const groupABody = document.getElementById("group-a-body");
   const groupBBody = document.getElementById("group-b-body");
@@ -54,13 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const row = tbodyElement.insertRow();
       row.className = `position-${index + 1}`;
 
-      const logoUrl = team.logo
-        ? resolveMediaUrl(team.logo)
-        : "../Image/team.png";
+      const logoUrl = withDefaultAsset(team.logo, "teamLogo");
       row.innerHTML = `
         <td data-label="Pos">${index + 1}</td>
         <td data-label="Equipo" title="${team.name}">
-          <img src="${logoUrl}" class="bracket-team-logo" alt="${team.name}" onerror="this.onerror=null; this.src='../Image/team.png';">
+          <img src="${logoUrl}" class="bracket-team-logo" alt="${team.name}" onerror="this.onerror=null; this.src='${DEFAULT_TEAM_LOGO}';">
           ${team.name}
         </td>
         <td data-label="PG">${team.stats.gamesWon || 0}</td>

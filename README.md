@@ -32,6 +32,26 @@ Si cuentas con un backend propio puedes sobrescribir la configuración antes de 
 
 Gracias a este archivo también se resuelven automáticamente las rutas de imágenes y logos a través de `resolveMediaUrl`, por lo que el frontend acepta rutas absolutas, relativas o incluso `data:` URIs.
 
+## Cliente JavaScript reutilizable
+
+El script [`Js/raynu-client.js`](Js/raynu-client.js) expone la instancia global
+`RaynuClient`, que centraliza el acceso al API, la resolución de medios y los
+recursos por defecto del torneo. Los módulos del sitio pueden consumirlo para
+obtener funciones listas para usar:
+
+- `RaynuClient.fetchApiData(endpoint)` intenta primero el backend configurado y
+  luego el modo offline.
+- `RaynuClient.resolveMediaUrl(path)` normaliza logos, fotos y documentos.
+- `RaynuClient.withDefault(path, key)` retorna automáticamente imágenes
+  placeholder (`teamLogo`, `casterPhoto`, etc.) cuando un registro no posee
+  recursos propios.
+- `RaynuClient.buildApiUrl(endpoint)` construye URLs completas hacia el backend
+  respetando la configuración activa.
+
+Si deseas personalizar los placeholders del proyecto basta con definir
+`defaultAssets` antes de cargar `config.js`; la información se fusionará con los
+valores por defecto (`teamLogo`, `casterPhoto` y `tournamentLogo`).
+
 ## Panel administrativo
 
 El panel (`/Admin`) conserva la lógica original para interactuar con un API REST real, pero mientras se utilicen los datos estáticos mostrará el mensaje de torneo concluido y permanecerá en modo lectura. Cuando el backend esté disponible, basta con ajustar `window.__RAYNU_CONFIG__` para apuntar al dominio correcto y recuperar toda la funcionalidad.

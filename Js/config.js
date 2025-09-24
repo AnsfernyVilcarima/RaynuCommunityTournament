@@ -2,6 +2,11 @@
   const DEFAULT_REMOTE_API = "https://api.raynucommunitytournament.xyz/api";
   const DEFAULT_REMOTE_SERVER = "https://api.raynucommunitytournament.xyz";
   const DEFAULT_STATIC_FALLBACK = "../api";
+  const DEFAULT_ASSETS = {
+    teamLogo: "../Image/team.png",
+    casterPhoto: "../Image/caster.png",
+    tournamentLogo: "../Image/logo.png",
+  };
 
   const userConfig = window.__RAYNU_CONFIG__ || {};
 
@@ -18,6 +23,11 @@
       userConfig.staticFallbackBaseUrl !== undefined
         ? userConfig.staticFallbackBaseUrl
         : DEFAULT_STATIC_FALLBACK,
+    defaultAssets:
+      typeof userConfig.defaultAssets === "object" &&
+      userConfig.defaultAssets !== null
+        ? { ...DEFAULT_ASSETS, ...userConfig.defaultAssets }
+        : { ...DEFAULT_ASSETS },
   };
 
   const normalizeEndpoint = (endpoint) => {

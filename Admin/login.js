@@ -1,9 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const globalConfig = window.__RAYNU_CONFIG__ || {};
-  const API_URL =
-    typeof globalConfig.apiBaseUrl === "string"
-      ? globalConfig.apiBaseUrl
-      : "https://api.raynucommunitytournament.xyz/api";
+  const client = window.RaynuClient || null;
+  const baseConfig =
+    (client && typeof client.getConfig === "function"
+      ? client.getConfig()
+      : window.__RAYNU_CONFIG__) || {};
+
+  const buildApiUrl =
+    client && typeof client.buildApiUrl === "function"
+      ? (endpoint = "") => client.buildApiUrl(endpoint)
+      : (endpoint = "") => {
+          const rawBase =
+            typeof baseConfig.apiBaseUrl === "string" &&
+            baseConfig.apiBaseUrl.trim()
+              ? baseConfig.apiBaseUrl.trim()
+              : "https://api.raynucommunitytournament.xyz/api";
+          const normalizedBase = rawBase.endsWith("/")
+            ? rawBase.slice(0, -1)
+            : rawBase;
+          if (!endpoint) return normalizedBase;
+          const normalizedEndpoint = endpoint.startsWith("/")
+            ? endpoint
+            : `/${endpoint}`;
+          return `${normalizedBase}${normalizedEndpoint}`;
+        };
+
+  const API_URL = buildApiUrl();
 
   const loginForm = document.getElementById("login-form");
   const messageBox = document.getElementById("login-message");
@@ -26,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
-        const response = await fetch(`${API_URL}/auth/login`, {
+        const response = await fetch(buildApiUrl("/auth/login"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
