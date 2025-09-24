@@ -1,6 +1,107 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://api.raynucommunitytournament.xyz/api";
-  const SERVER_BASE_URL = "https://api.raynucommunitytournament.xyz";
+
+  const adapterOptions = {
+    fallbackAssets: {
+      teamLogo: "../Image/team.png",
+    },
+  };
+
+  const ensureFunction = (candidate, fallback) =>
+    typeof candidate === "function" ? candidate : fallback;
+
+  const callWithFallback = (candidate, fallback) => (...args) =>
+    ensureFunction(candidate, fallback)(...args);
+
+  const createFallbackAdapter = (assets) => {
+    const config = window.__RAYNU_CONFIG__ || {};
+    const defaults = {
+      ...assets,
+      ...(config.defaultAssets && typeof config.defaultAssets === "object"
+        ? config.defaultAssets
+        : {}),
+    };
+
+    const normalizeEndpoint = (endpoint = "") =>
+      endpoint ? (endpoint.startsWith("/") ? endpoint : `/${endpoint}`) : "";
+
+    const buildApiUrl = (endpoint = "") => {
+      const rawBase =
+        (typeof config.apiBaseUrl === "string" && config.apiBaseUrl.trim()) ||
+        "https://api.raynucommunitytournament.xyz/api";
+      const normalizedBase = rawBase.endsWith("/")
+        ? rawBase.slice(0, -1)
+        : rawBase;
+      if (!endpoint) return normalizedBase;
+      return `${normalizedBase}${normalizeEndpoint(endpoint)}`;
+    };
+
+    const fetchFromConfig =
+      typeof config.fetchApiData === "function"
+        ? (endpoint) => config.fetchApiData(endpoint)
+        : async (endpoint) => {
+            const response = await fetch(buildApiUrl(endpoint));
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+          };
+
+    const resolveMediaUrl =
+      typeof config.resolveMediaUrl === "function"
+        ? (assetPath) => config.resolveMediaUrl(assetPath)
+        : (assetPath) => assetPath || "";
+
+    const getDefaultAsset = (key) => defaults[key] || "";
+
+    const withDefault = (assetPath, key) => {
+      const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+      return resolved || getDefaultAsset(key);
+    };
+
+    return {
+      defaults,
+      fetchApiData: fetchFromConfig,
+      resolveMediaUrl,
+      getDefaultAsset,
+      withDefault,
+      buildApiUrl,
+    };
+  };
+
+  const fallbackAdapter = createFallbackAdapter(adapterOptions.fallbackAssets);
+
+  const adapter =
+    (typeof window.getRaynuAdapter === "function" &&
+      window.getRaynuAdapter(adapterOptions)) ||
+    (window.RaynuClient &&
+    typeof window.RaynuClient.createAdapter === "function"
+      ? window.RaynuClient.createAdapter(adapterOptions)
+      : null) ||
+    fallbackAdapter;
+
+  const fetchApiData = callWithFallback(
+    adapter.fetchApiData,
+    fallbackAdapter.fetchApiData
+  );
+
+  const withDefaultAsset = callWithFallback(
+    adapter.withDefault,
+    fallbackAdapter.withDefault
+  );
+
+  const getDefaultAsset = callWithFallback(
+    adapter.getDefaultAsset,
+    fallbackAdapter.getDefaultAsset
+  );
+
+  const defaults = {
+    ...fallbackAdapter.defaults,
+    ...(adapter && typeof adapter === "object" && adapter.defaults
+      ? adapter.defaults
+      : {}),
+  };
+  const DEFAULT_TEAM_LOGO = getDefaultAsset("teamLogo") || defaults.teamLogo;
+
   const bracketContainer = document.getElementById("bracket-container");
   const loader = document.getElementById("loader");
 
@@ -35,17 +136,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    const team1Logo = team1
+      ? withDefaultAsset(team1.logo, "teamLogo")
+      : "";
+    const team2Logo = team2
+      ? withDefaultAsset(team2.logo, "teamLogo")
+      : "";
     const team1HTML = team1
-      ? `<img src="${SERVER_BASE_URL}${
-          team1.logo
-        }" class="bracket-team-logo" alt="${team1.name}"> ${team1.name} (${
+      ? `<img src="${team1Logo}" class="bracket-team-logo" alt="${team1.name}" onerror="this.onerror=null; this.src='${DEFAULT_TEAM_LOGO}';"> ${team1.name} (${
           team1.stats ? team1.stats.points : 0
         } pts)`
       : "Por definir";
     const team2HTML = team2
-      ? `<img src="${SERVER_BASE_URL}${
-          team2.logo
-        }" class="bracket-team-logo" alt="${team2.name}"> ${team2.name} (${
+      ? `<img src="${team2Logo}" class="bracket-team-logo" alt="${team2.name}" onerror="this.onerror=null; this.src='${DEFAULT_TEAM_LOGO}';"> ${team2.name} (${
           team2.stats ? team2.stats.points : 0
         } pts)`
       : "Por definir";
@@ -66,17 +169,37 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       loader.style.display = "flex";
 
-      const [teamsResponse, matchesResponse] = await Promise.all([
-        fetch(`${API_URL}/teams`),
-        fetch(`${API_URL}/matches`),
+      const [{ teams }, { matches }] = await Promise.all([
+        fetchApiData("/teams"),
+        fetchApiData("/matches"),
       ]);
 
-      if (!teamsResponse.ok || !matchesResponse.ok) {
-        throw new Error("No se pudieron cargar los datos.");
-      }
+      const teamsById = new Map((teams || []).map((team) => [team._id, team]));
+      const normalizedMatches = (matches || []).map((match) => {
+        const getTeamData = (teamRef) => {
+          if (!teamRef) return null;
+          if (typeof teamRef === "string") {
+            return teamsById.get(teamRef) || null;
+          }
+          if (typeof teamRef === "object" && teamRef._id) {
+            return teamsById.get(teamRef._id) || teamRef;
+          }
+          return teamRef;
+        };
 
-      const { teams } = await teamsResponse.json();
-      const { matches } = await matchesResponse.json();
+        const normalized = {
+          ...match,
+          team1: getTeamData(match.team1),
+          team2: getTeamData(match.team2),
+          winner: getTeamData(match.winner),
+        };
+
+        if (!normalized.result) {
+          normalized.result = { scoreTeam1: "", scoreTeam2: "" };
+        }
+
+        return normalized;
+      });
 
       const sortedGroupA = teams
         .filter((t) => t.group === "A")
@@ -104,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
         (t) => t
       );
 
-      const playoffMatches = matches.filter(
+      const playoffMatches = normalizedMatches.filter(
         (m) => m.isPlayoff && m.playoffRound
       );
       const matchesByRoundId = playoffMatches.reduce((acc, match) => {

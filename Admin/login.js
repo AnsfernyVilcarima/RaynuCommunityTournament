@@ -1,5 +1,43 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://api.raynucommunitytournament.xyz/api";
+  
+  const ensureFunction = (candidate, fallback) =>
+    typeof candidate === "function" ? candidate : fallback;
+
+  const createFallbackAdapter = () => {
+    const config = window.__RAYNU_CONFIG__ || {};
+
+    const normalizeEndpoint = (endpoint = "") =>
+      endpoint ? (endpoint.startsWith("/") ? endpoint : `/${endpoint}`) : "";
+
+    const buildApiUrl = (endpoint = "") => {
+      const rawBase =
+        (typeof config.apiBaseUrl === "string" && config.apiBaseUrl.trim()) ||
+        "https://api.raynucommunitytournament.xyz/api";
+      const normalizedBase = rawBase.endsWith("/")
+        ? rawBase.slice(0, -1)
+        : rawBase;
+      if (!endpoint) return normalizedBase;
+      return `${normalizedBase}${normalizeEndpoint(endpoint)}`;
+    };
+
+    return {
+      buildApiUrl,
+    };
+  };
+
+  const fallbackAdapter = createFallbackAdapter();
+
+  const adapter =
+    (typeof window.getRaynuAdapter === "function" &&
+      window.getRaynuAdapter()) ||
+    (window.RaynuClient &&
+    typeof window.RaynuClient.createAdapter === "function"
+      ? window.RaynuClient.createAdapter()
+      : null) ||
+    fallbackAdapter;
+
+  const buildApiUrl = (endpoint = "") =>
+    ensureFunction(adapter.buildApiUrl, fallbackAdapter.buildApiUrl)(endpoint);
 
   const loginForm = document.getElementById("login-form");
   const messageBox = document.getElementById("login-message");
@@ -22,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
-        const response = await fetch(`${API_URL}/auth/login`, {
+        const response = await fetch(buildApiUrl("/auth/login"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),

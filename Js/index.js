@@ -1,10 +1,110 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Script de la página de inicio (index.js) cargado.");
 
-  const API_BASE_URL = "https://api.raynucommunitytournament.xyz/api";
-  const SERVER_BASE_URL = "https://api.raynucommunitytournament.xyz";
-  const DEFAULT_TEAM_LOGO = "../Image/team.png";
-  const DEFAULT_CASTER_PHOTO = "../Image/caster.png";
+  const adapterOptions = {
+    fallbackAssets: {
+      teamLogo: "../Image/team.png",
+      casterPhoto: "../Image/caster.png",
+    },
+  };
+
+  const ensureFunction = (candidate, fallback) =>
+    typeof candidate === "function" ? candidate : fallback;
+
+  const callWithFallback = (candidate, fallback) => (...args) =>
+    ensureFunction(candidate, fallback)(...args);
+
+  const createFallbackAdapter = (assets) => {
+    const config = window.__RAYNU_CONFIG__ || {};
+    const defaults = {
+      ...assets,
+      ...(config.defaultAssets && typeof config.defaultAssets === "object"
+        ? config.defaultAssets
+        : {}),
+    };
+
+    const normalizeEndpoint = (endpoint = "") =>
+      endpoint ? (endpoint.startsWith("/") ? endpoint : `/${endpoint}`) : "";
+
+    const buildApiUrl = (endpoint = "") => {
+      const rawBase =
+        (typeof config.apiBaseUrl === "string" && config.apiBaseUrl.trim()) ||
+        "https://api.raynucommunitytournament.xyz/api";
+      const normalizedBase = rawBase.endsWith("/")
+        ? rawBase.slice(0, -1)
+        : rawBase;
+      if (!endpoint) return normalizedBase;
+      return `${normalizedBase}${normalizeEndpoint(endpoint)}`;
+    };
+
+    const fetchFromConfig =
+      typeof config.fetchApiData === "function"
+        ? (endpoint) => config.fetchApiData(endpoint)
+        : async (endpoint) => {
+            const response = await fetch(buildApiUrl(endpoint));
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+          };
+
+    const resolveMediaUrl =
+      typeof config.resolveMediaUrl === "function"
+        ? (assetPath) => config.resolveMediaUrl(assetPath)
+        : (assetPath) => assetPath || "";
+
+    const getDefaultAsset = (key) => defaults[key] || "";
+
+    const withDefault = (assetPath, key) => {
+      const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+      return resolved || getDefaultAsset(key);
+    };
+
+    return {
+      defaults,
+      fetchApiData: fetchFromConfig,
+      resolveMediaUrl,
+      getDefaultAsset,
+      withDefault,
+      buildApiUrl,
+    };
+  };
+
+  const fallbackAdapter = createFallbackAdapter(adapterOptions.fallbackAssets);
+
+  const adapter =
+    (typeof window.getRaynuAdapter === "function" &&
+      window.getRaynuAdapter(adapterOptions)) ||
+    (window.RaynuClient &&
+    typeof window.RaynuClient.createAdapter === "function"
+      ? window.RaynuClient.createAdapter(adapterOptions)
+      : null) ||
+    fallbackAdapter;
+
+  const fetchApiData = callWithFallback(
+    adapter.fetchApiData,
+    fallbackAdapter.fetchApiData
+  );
+
+  const getDefaultAsset = callWithFallback(
+    adapter.getDefaultAsset,
+    fallbackAdapter.getDefaultAsset
+  );
+
+  const withDefaultAsset = callWithFallback(
+    adapter.withDefault,
+    fallbackAdapter.withDefault
+  );
+
+  const defaults = {
+    ...fallbackAdapter.defaults,
+    ...(adapter && typeof adapter === "object" && adapter.defaults
+      ? adapter.defaults
+      : {}),
+  };
+  const DEFAULT_TEAM_LOGO = getDefaultAsset("teamLogo") || defaults.teamLogo;
+  const DEFAULT_CASTER_PHOTO =
+    getDefaultAsset("casterPhoto") || defaults.casterPhoto;
 
   const dom = {
     countdownContainer: document.getElementById("countdown"),
@@ -37,9 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const utils = {
     fetchAPI: async (endpoint) => {
       try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`);
-        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-        return response.json();
+        return await fetchApiData(endpoint);
       } catch (error) {
         console.error(`Error al obtener datos de ${endpoint}:`, error);
         throw error;
@@ -145,9 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const teamCard = document.createElement("div");
         teamCard.className = "team-card-index";
         teamCard.dataset.teamId = team._id;
-        const logoUrl = team.logo
-          ? `${SERVER_BASE_URL}${team.logo}`
-          : DEFAULT_TEAM_LOGO;
+        const logoUrl = withDefaultAsset(team.logo, "teamLogo");
         teamCard.innerHTML = `
             <img src="${logoUrl}" alt="Logo de ${
           team.name
@@ -172,9 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const casterCard = document.createElement("div");
         casterCard.className = "caster-card";
         casterCard.dataset.casterId = caster._id;
-        const photoUrl = caster.photo
-          ? `${SERVER_BASE_URL}${caster.photo}`
-          : DEFAULT_CASTER_PHOTO;
+        const photoUrl = withDefaultAsset(caster.photo, "casterPhoto");
         casterCard.innerHTML = `
             <img src="${photoUrl}" alt="Foto de ${
           caster.name
@@ -216,9 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
               .join("")
           : "<li>No hay jugadores registrados.</li>";
 
-      const logoSrc = team.logo
-        ? `${SERVER_BASE_URL}${team.logo}`
-        : DEFAULT_TEAM_LOGO;
+      const logoSrc = withDefaultAsset(team.logo, "teamLogo");
 
       dom.modalTeamDetails.innerHTML = `
         <img src="${logoSrc}" alt="Logo de ${
@@ -238,9 +330,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const caster = appState.castersData.find((c) => c._id === casterId);
       if (!caster || !dom.casterModal) return;
 
-      dom.modalCasterPhoto.src = caster.photo
-        ? `${SERVER_BASE_URL}${caster.photo}`
-        : DEFAULT_CASTER_PHOTO;
+      dom.modalCasterPhoto.src = withDefaultAsset(
+        caster.photo,
+        "casterPhoto"
+      );
       dom.modalCasterName.textContent = caster.name;
       dom.modalCasterDescription.textContent =
         caster.description || "Este caster no tiene una descripción detallada.";

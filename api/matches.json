@@ -1,0 +1,64 @@
+{
+  "matches": [
+    {
+      "_id": "match-group-a-1",
+      "team1": "team-raynu-dragons",
+      "team2": "team-rift-guardians",
+      "matchDate": "2025-08-05T18:00:00-05:00",
+      "group": "A",
+      "format": "Bo3",
+      "isPlayoff": false,
+      "isFinished": true,
+      "result": { "scoreTeam1": 2, "scoreTeam2": 1 },
+      "winner": "team-raynu-dragons"
+    },
+    {
+      "_id": "match-group-b-1",
+      "team1": "team-neon-foxes",
+      "team2": "team-aurora-wolves",
+      "matchDate": "2025-08-06T19:00:00-05:00",
+      "group": "B",
+      "format": "Bo3",
+      "isPlayoff": false,
+      "isFinished": true,
+      "result": { "scoreTeam1": 2, "scoreTeam2": 0 },
+      "winner": "team-neon-foxes"
+    },
+    {
+      "_id": "ub-sf-1",
+      "team1": "team-raynu-dragons",
+      "team2": "team-neon-foxes",
+      "matchDate": "2025-08-12T18:30:00-05:00",
+      "format": "Bo5",
+      "isPlayoff": true,
+      "playoffRound": "ub-sf-1",
+      "isFinished": false,
+      "result": { "scoreTeam1": 0, "scoreTeam2": 0 },
+      "winner": null
+    },
+    {
+      "_id": "ub-sf-2",
+      "team1": "team-rift-guardians",
+      "team2": "team-aurora-wolves",
+      "matchDate": "2025-08-12T20:30:00-05:00",
+      "format": "Bo5",
+      "isPlayoff": true,
+      "playoffRound": "ub-sf-2",
+      "isFinished": false,
+      "result": { "scoreTeam1": 0, "scoreTeam2": 0 },
+      "winner": null
+    },
+    {
+      "_id": "grand-final",
+      "team1": null,
+      "team2": null,
+      "matchDate": "2025-08-18T19:00:00-05:00",
+      "format": "Bo5",
+      "isPlayoff": true,
+      "playoffRound": "grand-final",
+      "isFinished": false,
+      "result": { "scoreTeam1": 0, "scoreTeam2": 0 },
+      "winner": null
+    }
+  ]
+}
