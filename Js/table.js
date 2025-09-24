@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+
   const adapterOptions = {
     fallbackAssets: {
       teamLogo: "../Image/team.png",

@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+
   const adapterOptions = {
     fallbackAssets: {
       teamLogo: "../Image/team.png",
@@ -100,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
       : {}),
   };
   const DEFAULT_TEAM_LOGO = getDefaultAsset("teamLogo") || defaults.teamLogo;
+
   const bracketContainer = document.getElementById("bracket-container");
   const loader = document.getElementById("loader");
 

@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  
   const ensureFunction = (candidate, fallback) =>
     typeof candidate === "function" ? candidate : fallback;
 
