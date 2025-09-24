@@ -1,38 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const client = window.RaynuClient || null;
-  const baseConfig =
-    (client && typeof client.getConfig === "function"
-      ? client.getConfig()
-      : window.__RAYNU_CONFIG__) || {};
+  const ensureFunction = (candidate, fallback) =>
+    typeof candidate === "function" ? candidate : fallback;
 
-  const adapter =
-    typeof window.getRaynuAdapter === "function"
-      ? window.getRaynuAdapter()
-      : null;
+  const createFallbackAdapter = () => {
+    const config = window.__RAYNU_CONFIG__ || {};
 
-  const buildApiUrl = (endpoint = "") => {
-    if (adapter && typeof adapter.buildApiUrl === "function") {
-      return adapter.buildApiUrl(endpoint);
-    }
-    if (client && typeof client.buildApiUrl === "function") {
-      return client.buildApiUrl(endpoint);
-    }
-    const rawBase =
-      typeof baseConfig.apiBaseUrl === "string" &&
-      baseConfig.apiBaseUrl.trim()
-        ? baseConfig.apiBaseUrl.trim()
-        : "https://api.raynucommunitytournament.xyz/api";
-    const normalizedBase = rawBase.endsWith("/")
-      ? rawBase.slice(0, -1)
-      : rawBase;
-    if (!endpoint) return normalizedBase;
-    const normalizedEndpoint = endpoint.startsWith("/")
-      ? endpoint
-      : `/${endpoint}`;
-    return `${normalizedBase}${normalizedEndpoint}`;
+    const normalizeEndpoint = (endpoint = "") =>
+      endpoint ? (endpoint.startsWith("/") ? endpoint : `/${endpoint}`) : "";
+
+    const buildApiUrl = (endpoint = "") => {
+      const rawBase =
+        (typeof config.apiBaseUrl === "string" && config.apiBaseUrl.trim()) ||
+        "https://api.raynucommunitytournament.xyz/api";
+      const normalizedBase = rawBase.endsWith("/")
+        ? rawBase.slice(0, -1)
+        : rawBase;
+      if (!endpoint) return normalizedBase;
+      return `${normalizedBase}${normalizeEndpoint(endpoint)}`;
+    };
+
+    return {
+      buildApiUrl,
+    };
   };
 
-  const API_URL = buildApiUrl();
+  const fallbackAdapter = createFallbackAdapter();
+
+  const adapter =
+    (typeof window.getRaynuAdapter === "function" &&
+      window.getRaynuAdapter()) ||
+    (window.RaynuClient &&
+    typeof window.RaynuClient.createAdapter === "function"
+      ? window.RaynuClient.createAdapter()
+      : null) ||
+    fallbackAdapter;
+
+  const buildApiUrl = (endpoint = "") =>
+    ensureFunction(adapter.buildApiUrl, fallbackAdapter.buildApiUrl)(endpoint);
 
   const loginForm = document.getElementById("login-form");
   const messageBox = document.getElementById("login-message");

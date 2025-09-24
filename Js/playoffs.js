@@ -5,17 +5,42 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  const createLocalAdapter = () => {
-    const config = window.__RAYNU_CONFIG__ || {};
-    const fallbackAssets = adapterOptions.fallbackAssets;
+  const ensureFunction = (candidate, fallback) =>
+    typeof candidate === "function" ? candidate : fallback;
 
-    const fetchApiData =
+  const callWithFallback = (candidate, fallback) => (...args) =>
+    ensureFunction(candidate, fallback)(...args);
+
+  const createFallbackAdapter = (assets) => {
+    const config = window.__RAYNU_CONFIG__ || {};
+    const defaults = {
+      ...assets,
+      ...(config.defaultAssets && typeof config.defaultAssets === "object"
+        ? config.defaultAssets
+        : {}),
+    };
+
+    const normalizeEndpoint = (endpoint = "") =>
+      endpoint ? (endpoint.startsWith("/") ? endpoint : `/${endpoint}`) : "";
+
+    const buildApiUrl = (endpoint = "") => {
+      const rawBase =
+        (typeof config.apiBaseUrl === "string" && config.apiBaseUrl.trim()) ||
+        "https://api.raynucommunitytournament.xyz/api";
+      const normalizedBase = rawBase.endsWith("/")
+        ? rawBase.slice(0, -1)
+        : rawBase;
+      if (!endpoint) return normalizedBase;
+      return `${normalizedBase}${normalizeEndpoint(endpoint)}`;
+    };
+
+    const fetchFromConfig =
       typeof config.fetchApiData === "function"
         ? (endpoint) => config.fetchApiData(endpoint)
         : async (endpoint) => {
-            const response = await fetch(endpoint);
+            const response = await fetch(buildApiUrl(endpoint));
             if (!response.ok) {
-              throw new Error(`Error HTTP: ${response.status}`);
+              throw new Error(`HTTP ${response.status}`);
             }
             return response.json();
           };
@@ -25,66 +50,55 @@ document.addEventListener("DOMContentLoaded", () => {
         ? (assetPath) => config.resolveMediaUrl(assetPath)
         : (assetPath) => assetPath || "";
 
-    const getDefaultAsset = (key) => {
-      const fromConfig =
-        config.defaultAssets && config.defaultAssets[key]
-          ? config.defaultAssets[key]
-          : undefined;
-      return fromConfig || fallbackAssets[key] || "";
+    const getDefaultAsset = (key) => defaults[key] || "";
+
+    const withDefault = (assetPath, key) => {
+      const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+      return resolved || getDefaultAsset(key);
     };
 
     return {
-      fetchApiData,
+      defaults,
+      fetchApiData: fetchFromConfig,
       resolveMediaUrl,
       getDefaultAsset,
-      withDefault(assetPath, key) {
-        const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
-        return resolved || getDefaultAsset(key);
-      },
-      get defaults() {
-        return { ...fallbackAssets, ...(config.defaultAssets || {}) };
-      },
+      withDefault,
+      buildApiUrl,
     };
   };
 
+  const fallbackAdapter = createFallbackAdapter(adapterOptions.fallbackAssets);
+
   const adapter =
-    typeof window.getRaynuAdapter === "function"
-      ? window.getRaynuAdapter(adapterOptions)
-      : createLocalAdapter();
+    (typeof window.getRaynuAdapter === "function" &&
+      window.getRaynuAdapter(adapterOptions)) ||
+    (window.RaynuClient &&
+    typeof window.RaynuClient.createAdapter === "function"
+      ? window.RaynuClient.createAdapter(adapterOptions)
+      : null) ||
+    fallbackAdapter;
 
-  const fetchApiData = (endpoint) => {
-    if (typeof adapter.fetchApiData === "function") {
-      return adapter.fetchApiData(endpoint);
-    }
-    return Promise.reject(new Error("No hay adaptador de API disponible."));
+  const fetchApiData = callWithFallback(
+    adapter.fetchApiData,
+    fallbackAdapter.fetchApiData
+  );
+
+  const withDefaultAsset = callWithFallback(
+    adapter.withDefault,
+    fallbackAdapter.withDefault
+  );
+
+  const getDefaultAsset = callWithFallback(
+    adapter.getDefaultAsset,
+    fallbackAdapter.getDefaultAsset
+  );
+
+  const defaults = {
+    ...fallbackAdapter.defaults,
+    ...(adapter && typeof adapter === "object" && adapter.defaults
+      ? adapter.defaults
+      : {}),
   };
-
-  const withDefaultAsset = (assetPath, key) => {
-    if (typeof adapter.withDefault === "function") {
-      return adapter.withDefault(assetPath, key);
-    }
-    const resolved = assetPath
-      ? typeof adapter.resolveMediaUrl === "function"
-        ? adapter.resolveMediaUrl(assetPath)
-        : assetPath
-      : "";
-    const defaults = adapter.defaults || adapterOptions.fallbackAssets;
-    const fallback =
-      (typeof adapter.getDefaultAsset === "function"
-        ? adapter.getDefaultAsset(key)
-        : null) || (defaults && defaults[key]) || "";
-    return resolved || fallback;
-  };
-
-  const getDefaultAsset = (key) => {
-    if (typeof adapter.getDefaultAsset === "function") {
-      return adapter.getDefaultAsset(key);
-    }
-    const defaults = adapter.defaults || adapterOptions.fallbackAssets;
-    return (defaults && defaults[key]) || adapterOptions.fallbackAssets[key] || "";
-  };
-
-  const defaults = adapter.defaults || adapterOptions.fallbackAssets;
   const DEFAULT_TEAM_LOGO = getDefaultAsset("teamLogo") || defaults.teamLogo;
   const bracketContainer = document.getElementById("bracket-container");
   const loader = document.getElementById("loader");

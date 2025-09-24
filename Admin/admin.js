@@ -11,9 +11,23 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     };
 
-    const createLocalAdapter = () => {
+    const ensureFunction = (candidate, fallback) =>
+      typeof candidate === "function" ? candidate : fallback;
+
+    const callWithFallback = (candidate, fallback) => (...args) =>
+      ensureFunction(candidate, fallback)(...args);
+
+    const createFallbackAdapter = (assets) => {
       const config = window.__RAYNU_CONFIG__ || {};
-      const fallbackAssets = adapterOptions.fallbackAssets;
+      const defaults = {
+        ...assets,
+        ...(config.defaultAssets && typeof config.defaultAssets === "object"
+          ? config.defaultAssets
+          : {}),
+      };
+
+      const normalizeEndpoint = (endpoint = "") =>
+        endpoint ? (endpoint.startsWith("/") ? endpoint : `/${endpoint}`) : "";
 
       const buildApiUrl = (endpoint = "") => {
         const rawBase =
@@ -23,94 +37,86 @@ document.addEventListener("DOMContentLoaded", () => {
           ? rawBase.slice(0, -1)
           : rawBase;
         if (!endpoint) return normalizedBase;
-        const normalizedEndpoint = endpoint.startsWith("/")
-          ? endpoint
-          : `/${endpoint}`;
-        return `${normalizedBase}${normalizedEndpoint}`;
+        return `${normalizedBase}${normalizeEndpoint(endpoint)}`;
       };
+
+      const fetchFromConfig =
+        typeof config.fetchApiData === "function"
+          ? (endpoint) => config.fetchApiData(endpoint)
+          : async (endpoint) => {
+              const response = await fetch(buildApiUrl(endpoint));
+              if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+              }
+              return response.json();
+            };
 
       const resolveMediaUrl =
         typeof config.resolveMediaUrl === "function"
           ? (assetPath) => config.resolveMediaUrl(assetPath)
           : (assetPath) => assetPath || "";
 
-      const getDefaultAsset = (key) => {
-        const fromConfig =
-          config.defaultAssets && config.defaultAssets[key]
-            ? config.defaultAssets[key]
-            : undefined;
-        return fromConfig || fallbackAssets[key] || "";
+      const getDefaultAsset = (key) => defaults[key] || "";
+
+      const withDefault = (assetPath, key) => {
+        const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+        return resolved || getDefaultAsset(key);
       };
 
       return {
-        fetchApiData:
-          typeof config.fetchApiData === "function"
-            ? (endpoint) => config.fetchApiData(endpoint)
-            : async (endpoint) => {
-                const response = await fetch(buildApiUrl(endpoint));
-                if (!response.ok) {
-                  throw new Error(`HTTP ${response.status}`);
-                }
-                return response.json();
-              },
+        defaults,
+        fetchApiData: fetchFromConfig,
         resolveMediaUrl,
         getDefaultAsset,
-        withDefault(assetPath, key) {
-          const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
-          return resolved || getDefaultAsset(key);
-        },
+        withDefault,
         buildApiUrl,
-        getApiBaseUrl: () => buildApiUrl(""),
-        get defaults() {
-          return { ...fallbackAssets, ...(config.defaultAssets || {}) };
-        },
         getConfig: () => config,
       };
     };
 
+    const fallbackAdapter = createFallbackAdapter(
+      adapterOptions.fallbackAssets
+    );
+
     const adapter =
-      typeof window.getRaynuAdapter === "function"
-        ? window.getRaynuAdapter(adapterOptions)
-        : createLocalAdapter();
+      (typeof window.getRaynuAdapter === "function" &&
+        window.getRaynuAdapter(adapterOptions)) ||
+      (window.RaynuClient &&
+      typeof window.RaynuClient.createAdapter === "function"
+        ? window.RaynuClient.createAdapter(adapterOptions)
+        : null) ||
+      fallbackAdapter;
 
-    const baseConfig =
-      (typeof adapter.getConfig === "function"
-        ? adapter.getConfig()
-        : window.__RAYNU_CONFIG__) || {};
+    const fetchApiData = callWithFallback(
+      adapter.fetchApiData,
+      fallbackAdapter.fetchApiData
+    );
+    const resolveMediaUrl = callWithFallback(
+      adapter.resolveMediaUrl,
+      fallbackAdapter.resolveMediaUrl
+    );
+    const getDefaultAsset = callWithFallback(
+      adapter.getDefaultAsset,
+      fallbackAdapter.getDefaultAsset
+    );
+    const withDefaultAsset = callWithFallback(
+      adapter.withDefault,
+      fallbackAdapter.withDefault
+    );
+    const buildApiUrl = callWithFallback(
+      adapter.buildApiUrl,
+      fallbackAdapter.buildApiUrl
+    );
+    const getConfig = callWithFallback(
+      adapter.getConfig,
+      fallbackAdapter.getConfig
+    );
 
-    const buildApiUrl = (endpoint = "") => {
-      if (typeof adapter.buildApiUrl === "function") {
-        return adapter.buildApiUrl(endpoint);
-      }
-      return endpoint;
-    };
-
-    const resolveMediaUrl = (assetPath) => {
-      if (typeof adapter.resolveMediaUrl === "function") {
-        return adapter.resolveMediaUrl(assetPath);
-      }
-      if (typeof baseConfig.resolveMediaUrl === "function") {
-        return baseConfig.resolveMediaUrl(assetPath);
-      }
-      return assetPath || "";
-    };
-
-    const getDefaultAsset = (key) => {
-      if (typeof adapter.getDefaultAsset === "function") {
-        const value = adapter.getDefaultAsset(key);
-        if (value) return value;
-      }
-      const defaults = adapter.defaults || adapterOptions.fallbackAssets;
-      return (defaults && defaults[key]) || adapterOptions.fallbackAssets[key] || "";
-    };
-
-    const withDefaultAsset = (assetPath, key) => {
-      if (typeof adapter.withDefault === "function") {
-        const value = adapter.withDefault(assetPath, key);
-        if (value) return value;
-      }
-      const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
-      return resolved || getDefaultAsset(key);
+    const defaults = {
+      ...fallbackAdapter.defaults,
+      ...(adapter && typeof adapter === "object" && adapter.defaults
+        ? adapter.defaults
+        : {}),
     };
 
     const config = {
@@ -119,6 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
       resolveMediaUrl,
       getDefaultAsset,
       withDefaultAsset,
+      fetchApiData,
+      defaults,
+      getConfig,
     };
 
     const DEFAULT_CASTER_PHOTO = config.getDefaultAsset("casterPhoto");
