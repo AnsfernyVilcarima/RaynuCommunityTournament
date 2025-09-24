@@ -119,8 +119,46 @@ document.addEventListener("DOMContentLoaded", () => {
         : {}),
     };
 
+    const currentConfig = (() => {
+      try {
+        const raw = getConfig();
+        return raw && typeof raw === "object" ? raw : {};
+      } catch (error) {
+        console.warn("[Raynu Admin] No se pudo obtener la configuración actual:", error);
+        return {};
+      }
+    })();
+
+    const deriveServerBaseUrl = () => {
+      const configuredServerBase =
+        typeof currentConfig.serverBaseUrl === "string"
+          ? currentConfig.serverBaseUrl.trim()
+          : "";
+
+      if (configuredServerBase) {
+        return configuredServerBase;
+      }
+
+      const configuredApiBase =
+        typeof currentConfig.apiBaseUrl === "string"
+          ? currentConfig.apiBaseUrl.trim()
+          : "";
+
+      const apiBaseCandidate = configuredApiBase || buildApiUrl();
+
+      if (!apiBaseCandidate) {
+        return "https://api.raynucommunitytournament.xyz";
+      }
+
+      const trimmed = apiBaseCandidate.replace(/\/+$/, "");
+      const withoutApi = trimmed.replace(/\/(api|api\/)$/i, "");
+
+      return withoutApi || trimmed || "https://api.raynucommunitytournament.xyz";
+    };
+
     const config = {
       API_URL: buildApiUrl(),
+      SERVER_BASE_URL: deriveServerBaseUrl(),
       buildApiUrl,
       resolveMediaUrl,
       getDefaultAsset,
