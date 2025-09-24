@@ -5,9 +5,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // =================================================================
     // --- 1. CONFIGURACIÓN Y ESTADO GLOBAL ---
     // =================================================================
+    const globalConfig = window.__RAYNU_CONFIG__ || {};
     const config = {
-      API_URL: "https://api.mochilacup.xyz/api",
-      SERVER_BASE_URL: "https://api.mochilacup.xyz",
+      API_URL:
+        typeof globalConfig.apiBaseUrl === "string"
+          ? globalConfig.apiBaseUrl
+          : "https://api.raynucommunitytournament.xyz/api",
+      SERVER_BASE_URL:
+        typeof globalConfig.resolveMediaUrl === "function"
+          ? ""
+          : typeof globalConfig.serverBaseUrl === "string"
+            ? globalConfig.serverBaseUrl
+            : "https://api.raynucommunitytournament.xyz",
+      resolveMediaUrl:
+        typeof globalConfig.resolveMediaUrl === "function"
+          ? globalConfig.resolveMediaUrl
+          : (path) => path || "",
     };
 
     const state = {
@@ -153,8 +166,11 @@ document.addEventListener("DOMContentLoaded", () => {
         render.list(dom.castersListContainer, state.casters, (item) => {
           const el = document.createElement("div");
           el.className = "admin-list-item";
-          const photoHtml = item.photo
-            ? `<img src="${config.SERVER_BASE_URL}${item.photo}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; margin-right: 10px;">`
+          const photoUrl = item.photo
+            ? config.resolveMediaUrl(item.photo)
+            : "";
+          const photoHtml = photoUrl
+            ? `<img src="${photoUrl}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; margin-right: 10px;">`
             : "";
           let socialsHtml = "<p>Sin redes sociales.</p>";
           if (item.socials && Object.keys(item.socials).length > 0) {

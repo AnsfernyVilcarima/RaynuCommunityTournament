@@ -1,8 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Script de la página de inicio (index.js) cargado.");
 
-  const API_BASE_URL = "https://api.mochilacup.xyz/api";
-  const SERVER_BASE_URL = "https://api.mochilacup.xyz";
+  const config = window.__RAYNU_CONFIG__ || {};
+  const fetchApiData =
+    typeof config.fetchApiData === "function"
+      ? config.fetchApiData
+      : async (endpoint) => {
+          const response = await fetch(endpoint);
+          if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
+          return response.json();
+        };
+  const resolveMediaUrl =
+    typeof config.resolveMediaUrl === "function"
+      ? config.resolveMediaUrl
+      : (assetPath) => assetPath || "";
   const DEFAULT_TEAM_LOGO = "../Image/team.png";
   const DEFAULT_CASTER_PHOTO = "../Image/caster.png";
 
@@ -37,9 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const utils = {
     fetchAPI: async (endpoint) => {
       try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`);
-        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-        return response.json();
+        return await fetchApiData(endpoint);
       } catch (error) {
         console.error(`Error al obtener datos de ${endpoint}:`, error);
         throw error;
@@ -146,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
         teamCard.className = "team-card-index";
         teamCard.dataset.teamId = team._id;
         const logoUrl = team.logo
-          ? `${SERVER_BASE_URL}${team.logo}`
+          ? resolveMediaUrl(team.logo)
           : DEFAULT_TEAM_LOGO;
         teamCard.innerHTML = `
             <img src="${logoUrl}" alt="Logo de ${
@@ -173,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
         casterCard.className = "caster-card";
         casterCard.dataset.casterId = caster._id;
         const photoUrl = caster.photo
-          ? `${SERVER_BASE_URL}${caster.photo}`
+          ? resolveMediaUrl(caster.photo)
           : DEFAULT_CASTER_PHOTO;
         casterCard.innerHTML = `
             <img src="${photoUrl}" alt="Foto de ${
@@ -217,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
           : "<li>No hay jugadores registrados.</li>";
 
       const logoSrc = team.logo
-        ? `${SERVER_BASE_URL}${team.logo}`
+        ? resolveMediaUrl(team.logo)
         : DEFAULT_TEAM_LOGO;
 
       dom.modalTeamDetails.innerHTML = `
@@ -239,7 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!caster || !dom.casterModal) return;
 
       dom.modalCasterPhoto.src = caster.photo
-        ? `${SERVER_BASE_URL}${caster.photo}`
+        ? resolveMediaUrl(caster.photo)
         : DEFAULT_CASTER_PHOTO;
       dom.modalCasterName.textContent = caster.name;
       dom.modalCasterDescription.textContent =

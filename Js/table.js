@@ -1,6 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://api.mochilacup.xyz/api";
-  const SERVER_BASE_URL = "https://api.mochilacup.xyz";
+  const config = window.__RAYNU_CONFIG__ || {};
+  const fetchApiData =
+    typeof config.fetchApiData === "function"
+      ? config.fetchApiData
+      : async (endpoint) => {
+          const response = await fetch(endpoint);
+          if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
+          return response.json();
+        };
+  const resolveMediaUrl =
+    typeof config.resolveMediaUrl === "function"
+      ? config.resolveMediaUrl
+      : (assetPath) => assetPath || "";
 
   const groupABody = document.getElementById("group-a-body");
   const groupBBody = document.getElementById("group-b-body");
@@ -41,12 +54,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const row = tbodyElement.insertRow();
       row.className = `position-${index + 1}`;
 
+      const logoUrl = team.logo
+        ? resolveMediaUrl(team.logo)
+        : "../Image/team.png";
       row.innerHTML = `
         <td data-label="Pos">${index + 1}</td>
         <td data-label="Equipo" title="${team.name}">
-          <img src="${SERVER_BASE_URL}${
-        team.logo
-      }" class="bracket-team-logo" alt="${team.name}">
+          <img src="${logoUrl}" class="bracket-team-logo" alt="${team.name}" onerror="this.onerror=null; this.src='../Image/team.png';">
           ${team.name}
         </td>
         <td data-label="PG">${team.stats.gamesWon || 0}</td>
@@ -68,13 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fetchAndRenderTables = async () => {
     try {
-      const response = await fetch(`${API_URL}/teams`);
-      if (!response.ok) {
-        throw new Error(
-          `Error HTTP: ${response.status} - ${response.statusText}`
-        );
-      }
-      const { teams } = await response.json();
+      const { teams } = await fetchApiData("/teams");
 
       if (!teams || teams.length === 0) {
         toggleMainContentVisibility(false);

@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://api.mochilacup.xyz/api";
+  const globalConfig = window.__RAYNU_CONFIG__ || {};
+  const API_URL =
+    typeof globalConfig.apiBaseUrl === "string"
+      ? globalConfig.apiBaseUrl
+      : "https://api.raynucommunitytournament.xyz/api";
 
   const loginForm = document.getElementById("login-form");
   const messageBox = document.getElementById("login-message");

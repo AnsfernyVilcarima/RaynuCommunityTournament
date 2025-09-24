@@ -1,0 +1,72 @@
+{
+  "teams": [
+    {
+      "_id": "team-raynu-dragons",
+      "name": "Raynu Dragons",
+      "motto": "Dominio aéreo en cada partida",
+      "group": "A",
+      "logo": "/Image/team.png",
+      "members": [
+        { "name": "Aurelio", "role": "Capitán" },
+        { "name": "Kaori", "role": "Soporte" },
+        { "name": "Nayr", "role": "Carry" }
+      ],
+      "stats": {
+        "points": 6,
+        "gamesWon": 2,
+        "gamesLost": 0
+      }
+    },
+    {
+      "_id": "team-rift-guardians",
+      "name": "Rift Guardians",
+      "motto": "Defendemos la grieta",
+      "group": "A",
+      "logo": "/Image/team.png",
+      "members": [
+        { "name": "Lumen", "role": "Capitán" },
+        { "name": "Izel", "role": "Jungla" },
+        { "name": "Saeko", "role": "Mid" }
+      ],
+      "stats": {
+        "points": 3,
+        "gamesWon": 1,
+        "gamesLost": 1
+      }
+    },
+    {
+      "_id": "team-neon-foxes",
+      "name": "Neon Foxes",
+      "motto": "Astucia y reflejos",
+      "group": "B",
+      "logo": "/Image/team.png",
+      "members": [
+        { "name": "Vega", "role": "Capitana" },
+        { "name": "Omen", "role": "Soporte" },
+        { "name": "Lyra", "role": "Carry" }
+      ],
+      "stats": {
+        "points": 6,
+        "gamesWon": 2,
+        "gamesLost": 0
+      }
+    },
+    {
+      "_id": "team-aurora-wolves",
+      "name": "Aurora Wolves",
+      "motto": "Aullamos al amanecer",
+      "group": "B",
+      "logo": "/Image/team.png",
+      "members": [
+        { "name": "Ryo", "role": "Capitán" },
+        { "name": "Mina", "role": "Soporte" },
+        { "name": "Sora", "role": "Flex" }
+      ],
+      "stats": {
+        "points": 0,
+        "gamesWon": 0,
+        "gamesLost": 2
+      }
+    }
+  ]
+}
