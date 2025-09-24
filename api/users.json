@@ -1,0 +1,10 @@
+{
+  "users": [
+    {
+      "_id": "user-admin",
+      "name": "Admin Raynu",
+      "email": "admin@raynucommunitytournament.xyz",
+      "roles": ["admin"]
+    }
+  ]
+}

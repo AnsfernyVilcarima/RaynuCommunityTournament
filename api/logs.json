@@ -1,0 +1,10 @@
+{
+  "logs": [
+    {
+      "_id": "log-initial-seed",
+      "action": "Se creó el conjunto de datos de ejemplo del Raynu Community Tournament.",
+      "actor": "sistema",
+      "createdAt": "2025-07-01T12:00:00Z"
+    }
+  ]
+}

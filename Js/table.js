@@ -1,6 +1,87 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://api.mochilacup.xyz/api";
-  const SERVER_BASE_URL = "https://api.mochilacup.xyz";
+  const adapterOptions = {
+    fallbackAssets: {
+      teamLogo: "../Image/team.png",
+    },
+  };
+
+  const createLocalAdapter = () => {
+    const config = window.__RAYNU_CONFIG__ || {};
+    const fallbackAssets = adapterOptions.fallbackAssets;
+
+    const fetchApiData =
+      typeof config.fetchApiData === "function"
+        ? (endpoint) => config.fetchApiData(endpoint)
+        : async (endpoint) => {
+            const response = await fetch(endpoint);
+            if (!response.ok) {
+              throw new Error(`Error HTTP: ${response.status}`);
+            }
+            return response.json();
+          };
+
+    const resolveMediaUrl =
+      typeof config.resolveMediaUrl === "function"
+        ? (assetPath) => config.resolveMediaUrl(assetPath)
+        : (assetPath) => assetPath || "";
+
+    const getDefaultAsset = (key) => {
+      const fromConfig =
+        config.defaultAssets && config.defaultAssets[key]
+          ? config.defaultAssets[key]
+          : undefined;
+      return fromConfig || fallbackAssets[key] || "";
+    };
+
+    return {
+      fetchApiData,
+      resolveMediaUrl,
+      getDefaultAsset,
+      withDefault(assetPath, key) {
+        const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+        return resolved || getDefaultAsset(key);
+      },
+      get defaults() {
+        return { ...fallbackAssets, ...(config.defaultAssets || {}) };
+      },
+    };
+  };
+
+  const adapter =
+    typeof window.getRaynuAdapter === "function"
+      ? window.getRaynuAdapter(adapterOptions)
+      : createLocalAdapter();
+
+  const fetchApiData = (endpoint) => {
+    if (typeof adapter.fetchApiData === "function") {
+      return adapter.fetchApiData(endpoint);
+    }
+    return Promise.reject(new Error("No hay adaptador de API disponible."));
+  };
+
+  const withDefaultAsset = (assetPath, key) => {
+    if (typeof adapter.withDefault === "function") {
+      return adapter.withDefault(assetPath, key);
+    }
+    const resolved = assetPath
+      ? typeof adapter.resolveMediaUrl === "function"
+        ? adapter.resolveMediaUrl(assetPath)
+        : assetPath
+      : "";
+    const fallback = getDefaultAsset(key);
+    return resolved || fallback;
+  };
+
+  const getDefaultAsset = (key) => {
+    if (typeof adapter.getDefaultAsset === "function") {
+      return adapter.getDefaultAsset(key);
+    }
+    const defaults = adapter.defaults || adapterOptions.fallbackAssets;
+    return (defaults && defaults[key]) || adapterOptions.fallbackAssets[key] || "";
+  };
+
+  const defaults = adapter.defaults || adapterOptions.fallbackAssets;
+  const DEFAULT_TEAM_LOGO = getDefaultAsset("teamLogo") || defaults.teamLogo;
 
   const groupABody = document.getElementById("group-a-body");
   const groupBBody = document.getElementById("group-b-body");
@@ -41,12 +122,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const row = tbodyElement.insertRow();
       row.className = `position-${index + 1}`;
 
+      const logoUrl = withDefaultAsset(team.logo, "teamLogo");
       row.innerHTML = `
         <td data-label="Pos">${index + 1}</td>
         <td data-label="Equipo" title="${team.name}">
-          <img src="${SERVER_BASE_URL}${
-        team.logo
-      }" class="bracket-team-logo" alt="${team.name}">
+          <img src="${logoUrl}" class="bracket-team-logo" alt="${team.name}" onerror="this.onerror=null; this.src='${DEFAULT_TEAM_LOGO}';">
           ${team.name}
         </td>
         <td data-label="PG">${team.stats.gamesWon || 0}</td>
@@ -68,13 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fetchAndRenderTables = async () => {
     try {
-      const response = await fetch(`${API_URL}/teams`);
-      if (!response.ok) {
-        throw new Error(
-          `Error HTTP: ${response.status} - ${response.statusText}`
-        );
-      }
-      const { teams } = await response.json();
+      const { teams } = await fetchApiData("/teams");
 
       if (!teams || teams.length === 0) {
         toggleMainContentVisibility(false);

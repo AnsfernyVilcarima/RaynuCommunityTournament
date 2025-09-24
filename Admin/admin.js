@@ -5,10 +5,123 @@ document.addEventListener("DOMContentLoaded", () => {
     // =================================================================
     // --- 1. CONFIGURACIÓN Y ESTADO GLOBAL ---
     // =================================================================
-    const config = {
-      API_URL: "https://api.mochilacup.xyz/api",
-      SERVER_BASE_URL: "https://api.mochilacup.xyz",
+    const adapterOptions = {
+      fallbackAssets: {
+        casterPhoto: "../Image/caster.png",
+      },
     };
+
+    const createLocalAdapter = () => {
+      const config = window.__RAYNU_CONFIG__ || {};
+      const fallbackAssets = adapterOptions.fallbackAssets;
+
+      const buildApiUrl = (endpoint = "") => {
+        const rawBase =
+          (typeof config.apiBaseUrl === "string" && config.apiBaseUrl.trim()) ||
+          "https://api.raynucommunitytournament.xyz/api";
+        const normalizedBase = rawBase.endsWith("/")
+          ? rawBase.slice(0, -1)
+          : rawBase;
+        if (!endpoint) return normalizedBase;
+        const normalizedEndpoint = endpoint.startsWith("/")
+          ? endpoint
+          : `/${endpoint}`;
+        return `${normalizedBase}${normalizedEndpoint}`;
+      };
+
+      const resolveMediaUrl =
+        typeof config.resolveMediaUrl === "function"
+          ? (assetPath) => config.resolveMediaUrl(assetPath)
+          : (assetPath) => assetPath || "";
+
+      const getDefaultAsset = (key) => {
+        const fromConfig =
+          config.defaultAssets && config.defaultAssets[key]
+            ? config.defaultAssets[key]
+            : undefined;
+        return fromConfig || fallbackAssets[key] || "";
+      };
+
+      return {
+        fetchApiData:
+          typeof config.fetchApiData === "function"
+            ? (endpoint) => config.fetchApiData(endpoint)
+            : async (endpoint) => {
+                const response = await fetch(buildApiUrl(endpoint));
+                if (!response.ok) {
+                  throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+              },
+        resolveMediaUrl,
+        getDefaultAsset,
+        withDefault(assetPath, key) {
+          const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+          return resolved || getDefaultAsset(key);
+        },
+        buildApiUrl,
+        getApiBaseUrl: () => buildApiUrl(""),
+        get defaults() {
+          return { ...fallbackAssets, ...(config.defaultAssets || {}) };
+        },
+        getConfig: () => config,
+      };
+    };
+
+    const adapter =
+      typeof window.getRaynuAdapter === "function"
+        ? window.getRaynuAdapter(adapterOptions)
+        : createLocalAdapter();
+
+    const baseConfig =
+      (typeof adapter.getConfig === "function"
+        ? adapter.getConfig()
+        : window.__RAYNU_CONFIG__) || {};
+
+    const buildApiUrl = (endpoint = "") => {
+      if (typeof adapter.buildApiUrl === "function") {
+        return adapter.buildApiUrl(endpoint);
+      }
+      return endpoint;
+    };
+
+    const resolveMediaUrl = (assetPath) => {
+      if (typeof adapter.resolveMediaUrl === "function") {
+        return adapter.resolveMediaUrl(assetPath);
+      }
+      if (typeof baseConfig.resolveMediaUrl === "function") {
+        return baseConfig.resolveMediaUrl(assetPath);
+      }
+      return assetPath || "";
+    };
+
+    const getDefaultAsset = (key) => {
+      if (typeof adapter.getDefaultAsset === "function") {
+        const value = adapter.getDefaultAsset(key);
+        if (value) return value;
+      }
+      const defaults = adapter.defaults || adapterOptions.fallbackAssets;
+      return (defaults && defaults[key]) || adapterOptions.fallbackAssets[key] || "";
+    };
+
+    const withDefaultAsset = (assetPath, key) => {
+      if (typeof adapter.withDefault === "function") {
+        const value = adapter.withDefault(assetPath, key);
+        if (value) return value;
+      }
+      const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+      return resolved || getDefaultAsset(key);
+    };
+
+    const config = {
+      API_URL: buildApiUrl(),
+      buildApiUrl,
+      resolveMediaUrl,
+      getDefaultAsset,
+      withDefaultAsset,
+    };
+
+    const DEFAULT_CASTER_PHOTO = config.getDefaultAsset("casterPhoto");
 
     const state = {
       teams: [],
@@ -46,9 +159,15 @@ document.addEventListener("DOMContentLoaded", () => {
       masterTeamSelect: document.getElementById("master-team-select"),
       manualTeam1Select: document.getElementById("manual-team1-select"),
       manualTeam2Select: document.getElementById("manual-team2-select"),
+      manualMatchDate: document.getElementById("manual-match-date"),
+      manualGroupSelect: document.getElementById("manual-group-select"),
       matchSelect: document.getElementById("match-select"),
-      sanctionTeamSelect: document.getElementById("sanction-team-select"),
       matchDetailsContainer: document.getElementById("match-details"),
+      matchTeam1Label: document.getElementById("match-team1-label"),
+      matchTeam2Label: document.getElementById("match-team2-label"),
+      team1ScoreInput: document.getElementById("team1-score"),
+      team2ScoreInput: document.getElementById("team2-score"),
+      sanctionTeamSelect: document.getElementById("sanction-team-select"),
       editFieldsContainer: document.getElementById("edit-fields-container"),
       membersListContainer: document.getElementById("members-list-container"),
       castersListContainer: document.getElementById("casters-list-container"),
@@ -62,21 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
       isPlayoffCheckbox: document.getElementById("is-playoff-checkbox"),
       playoffRoundGroup: document.getElementById("playoff-round-group"),
       casterFormCancelButton: document.getElementById("caster-form-cancel"),
-
-      manualTeam1Select: document.getElementById("manual-team1-select"),
-      manualTeam2Select: document.getElementById("manual-team2-select"),
-      manualMatchDate: document.getElementById("manual-match-date"),
-      manualGroupSelect: document.getElementById("manual-group-select"),
-      isPlayoffCheckbox: document.getElementById("is-playoff-checkbox"),
-      playoffRoundGroup: document.getElementById("playoff-round-group"),
-      createMatchForm: document.getElementById("create-match-form"),
-      matchSelect: document.getElementById("match-select"),
-      matchDetailsContainer: document.getElementById("match-details"),
-      matchTeam1Label: document.getElementById("match-team1-label"),
-      matchTeam2Label: document.getElementById("match-team2-label"),
-      team1ScoreInput: document.getElementById("team1-score"),
-      team2ScoreInput: document.getElementById("team2-score"),
-      updateScoreForm: document.getElementById("update-score-form"),
     };
 
     // =================================================================
@@ -153,8 +257,9 @@ document.addEventListener("DOMContentLoaded", () => {
         render.list(dom.castersListContainer, state.casters, (item) => {
           const el = document.createElement("div");
           el.className = "admin-list-item";
-          const photoHtml = item.photo
-            ? `<img src="${config.SERVER_BASE_URL}${item.photo}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; margin-right: 10px;">`
+          const photoUrl = config.withDefaultAsset(item.photo, "casterPhoto");
+          const photoHtml = photoUrl
+            ? `<img src="${photoUrl}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; margin-right: 10px;" onerror="this.onerror=null; this.src='${DEFAULT_CASTER_PHOTO}';">`
             : "";
           let socialsHtml = "<p>Sin redes sociales.</p>";
           if (item.socials && Object.keys(item.socials).length > 0) {

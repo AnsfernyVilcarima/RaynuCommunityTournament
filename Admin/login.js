@@ -1,5 +1,38 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://api.mochilacup.xyz/api";
+  const client = window.RaynuClient || null;
+  const baseConfig =
+    (client && typeof client.getConfig === "function"
+      ? client.getConfig()
+      : window.__RAYNU_CONFIG__) || {};
+
+  const adapter =
+    typeof window.getRaynuAdapter === "function"
+      ? window.getRaynuAdapter()
+      : null;
+
+  const buildApiUrl = (endpoint = "") => {
+    if (adapter && typeof adapter.buildApiUrl === "function") {
+      return adapter.buildApiUrl(endpoint);
+    }
+    if (client && typeof client.buildApiUrl === "function") {
+      return client.buildApiUrl(endpoint);
+    }
+    const rawBase =
+      typeof baseConfig.apiBaseUrl === "string" &&
+      baseConfig.apiBaseUrl.trim()
+        ? baseConfig.apiBaseUrl.trim()
+        : "https://api.raynucommunitytournament.xyz/api";
+    const normalizedBase = rawBase.endsWith("/")
+      ? rawBase.slice(0, -1)
+      : rawBase;
+    if (!endpoint) return normalizedBase;
+    const normalizedEndpoint = endpoint.startsWith("/")
+      ? endpoint
+      : `/${endpoint}`;
+    return `${normalizedBase}${normalizedEndpoint}`;
+  };
+
+  const API_URL = buildApiUrl();
 
   const loginForm = document.getElementById("login-form");
   const messageBox = document.getElementById("login-message");
@@ -22,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
-        const response = await fetch(`${API_URL}/auth/login`, {
+        const response = await fetch(buildApiUrl("/auth/login"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),

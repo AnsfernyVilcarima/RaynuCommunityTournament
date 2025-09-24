@@ -1,0 +1,24 @@
+{
+  "casters": [
+    {
+      "_id": "caster-aurora-vox",
+      "name": "Aurora Vox",
+      "photo": "/Image/caster.png",
+      "description": "Narradora principal del Raynu Community Tournament.",
+      "socials": {
+        "kick": "https://kick.com/auroravox",
+        "twitter": "https://x.com/auroravox"
+      }
+    },
+    {
+      "_id": "caster-lumen-wave",
+      "name": "Lumen Wave",
+      "photo": "/Image/caster.png",
+      "description": "Analista con foco en estrategias de late game.",
+      "socials": {
+        "youtube": "https://www.youtube.com/@lumenwave",
+        "instagram": "https://www.instagram.com/lumenwave"
+      }
+    }
+  ]
+}
