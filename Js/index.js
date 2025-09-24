@@ -1,49 +1,91 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Script de la página de inicio (index.js) cargado.");
 
-  const client = window.RaynuClient || null;
-  const fallbackAssets = {
-    teamLogo: "../Image/team.png",
-    casterPhoto: "../Image/caster.png",
+  const adapterOptions = {
+    fallbackAssets: {
+      teamLogo: "../Image/team.png",
+      casterPhoto: "../Image/caster.png",
+    },
   };
 
-  const fallbackFetch = async (endpoint) => {
-    const response = await fetch(endpoint);
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+  const createLocalAdapter = () => {
+    const config = window.__RAYNU_CONFIG__ || {};
+    const fallbackAssets = adapterOptions.fallbackAssets;
+
+    const fetchApiData =
+      typeof config.fetchApiData === "function"
+        ? (endpoint) => config.fetchApiData(endpoint)
+        : async (endpoint) => {
+            const response = await fetch(endpoint);
+            if (!response.ok) {
+              throw new Error(`Error HTTP: ${response.status}`);
+            }
+            return response.json();
+          };
+
+    const resolveMediaUrl =
+      typeof config.resolveMediaUrl === "function"
+        ? (assetPath) => config.resolveMediaUrl(assetPath)
+        : (assetPath) => assetPath || "";
+
+    const getDefaultAsset = (key) => {
+      const fromConfig =
+        config.defaultAssets && config.defaultAssets[key]
+          ? config.defaultAssets[key]
+          : undefined;
+      return fromConfig || fallbackAssets[key] || "";
+    };
+
+    return {
+      fetchApiData,
+      resolveMediaUrl,
+      getDefaultAsset,
+      withDefault(assetPath, key) {
+        const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+        return resolved || getDefaultAsset(key);
+      },
+      get defaults() {
+        return { ...fallbackAssets, ...(config.defaultAssets || {}) };
+      },
+    };
+  };
+
+  const adapter =
+    typeof window.getRaynuAdapter === "function"
+      ? window.getRaynuAdapter(adapterOptions)
+      : createLocalAdapter();
+
+  const fetchApiData = (endpoint) => {
+    if (typeof adapter.fetchApiData === "function") {
+      return adapter.fetchApiData(endpoint);
     }
-    return response.json();
+    return Promise.reject(new Error("No hay adaptador de API disponible."));
   };
-
-  const fetchApiData =
-    client && typeof client.fetchApiData === "function"
-      ? (endpoint) => client.fetchApiData(endpoint)
-      : fallbackFetch;
-
-  const resolveMediaUrl =
-    client && typeof client.resolveMediaUrl === "function"
-      ? (assetPath) => client.resolveMediaUrl(assetPath)
-      : (assetPath) => assetPath || "";
 
   const getDefaultAsset = (key) => {
-    if (client && typeof client.getDefaultAsset === "function") {
-      const value = client.getDefaultAsset(key);
-      if (value) return value;
+    if (typeof adapter.getDefaultAsset === "function") {
+      return adapter.getDefaultAsset(key);
     }
-    return fallbackAssets[key] || "";
+    const defaults = adapter.defaults || adapterOptions.fallbackAssets;
+    return (defaults && defaults[key]) || adapterOptions.fallbackAssets[key] || "";
   };
 
-  const withDefaultAsset =
-    client && typeof client.withDefault === "function"
-      ? (assetPath, key) =>
-          client.withDefault(assetPath, key) || getDefaultAsset(key)
-      : (assetPath, key) => {
-          const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
-          return resolved || getDefaultAsset(key);
-        };
+  const withDefaultAsset = (assetPath, key) => {
+    if (typeof adapter.withDefault === "function") {
+      return adapter.withDefault(assetPath, key);
+    }
+    const resolved = assetPath
+      ? typeof adapter.resolveMediaUrl === "function"
+        ? adapter.resolveMediaUrl(assetPath)
+        : assetPath
+      : "";
+    return resolved || getDefaultAsset(key);
+  };
 
-  const DEFAULT_TEAM_LOGO = getDefaultAsset("teamLogo");
-  const DEFAULT_CASTER_PHOTO = getDefaultAsset("casterPhoto");
+  const defaults = adapter.defaults || adapterOptions.fallbackAssets;
+  const DEFAULT_TEAM_LOGO = getDefaultAsset("teamLogo") || defaults.teamLogo;
+  const DEFAULT_CASTER_PHOTO =
+    getDefaultAsset("casterPhoto") || defaults.casterPhoto;
 
   const dom = {
     countdownContainer: document.getElementById("countdown"),

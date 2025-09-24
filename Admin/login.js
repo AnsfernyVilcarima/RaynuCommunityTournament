@@ -5,24 +5,32 @@ document.addEventListener("DOMContentLoaded", () => {
       ? client.getConfig()
       : window.__RAYNU_CONFIG__) || {};
 
-  const buildApiUrl =
-    client && typeof client.buildApiUrl === "function"
-      ? (endpoint = "") => client.buildApiUrl(endpoint)
-      : (endpoint = "") => {
-          const rawBase =
-            typeof baseConfig.apiBaseUrl === "string" &&
-            baseConfig.apiBaseUrl.trim()
-              ? baseConfig.apiBaseUrl.trim()
-              : "https://api.raynucommunitytournament.xyz/api";
-          const normalizedBase = rawBase.endsWith("/")
-            ? rawBase.slice(0, -1)
-            : rawBase;
-          if (!endpoint) return normalizedBase;
-          const normalizedEndpoint = endpoint.startsWith("/")
-            ? endpoint
-            : `/${endpoint}`;
-          return `${normalizedBase}${normalizedEndpoint}`;
-        };
+  const adapter =
+    typeof window.getRaynuAdapter === "function"
+      ? window.getRaynuAdapter()
+      : null;
+
+  const buildApiUrl = (endpoint = "") => {
+    if (adapter && typeof adapter.buildApiUrl === "function") {
+      return adapter.buildApiUrl(endpoint);
+    }
+    if (client && typeof client.buildApiUrl === "function") {
+      return client.buildApiUrl(endpoint);
+    }
+    const rawBase =
+      typeof baseConfig.apiBaseUrl === "string" &&
+      baseConfig.apiBaseUrl.trim()
+        ? baseConfig.apiBaseUrl.trim()
+        : "https://api.raynucommunitytournament.xyz/api";
+    const normalizedBase = rawBase.endsWith("/")
+      ? rawBase.slice(0, -1)
+      : rawBase;
+    if (!endpoint) return normalizedBase;
+    const normalizedEndpoint = endpoint.startsWith("/")
+      ? endpoint
+      : `/${endpoint}`;
+    return `${normalizedBase}${normalizedEndpoint}`;
+  };
 
   const API_URL = buildApiUrl();
 

@@ -47,6 +47,10 @@ obtener funciones listas para usar:
   recursos propios.
 - `RaynuClient.buildApiUrl(endpoint)` construye URLs completas hacia el backend
   respetando la configuración activa.
+- `window.getRaynuAdapter({ fallbackAssets })` devuelve un adaptador listo para
+  usarse en cualquier script, combinando automáticamente las funciones del
+  cliente con valores por defecto para logos o fotos cuando el helper no esté
+  disponible.
 
 Si deseas personalizar los placeholders del proyecto basta con definir
 `defaultAssets` antes de cargar `config.js`; la información se fusionará con los

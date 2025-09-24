@@ -17,6 +17,85 @@
 
   const fallbackResolver = (assetPath) => assetPath || "";
 
+  const createFallbackAdapter = ({
+    fallbackAssets = {},
+    fallbackFetch,
+    fallbackResolveMediaUrl,
+  } = {}) => {
+    const config = safeConfig();
+
+    const buildApiUrl = (endpoint = "") => {
+      const rawBase =
+        (typeof config.apiBaseUrl === "string" && config.apiBaseUrl.trim()) ||
+        "https://api.raynucommunitytournament.xyz/api";
+      const normalizedBase = rawBase.endsWith("/")
+        ? rawBase.slice(0, -1)
+        : rawBase;
+      if (!endpoint) return normalizedBase;
+      const normalizedEndpoint = endpoint.startsWith("/")
+        ? endpoint
+        : `/${endpoint}`;
+      return `${normalizedBase}${normalizedEndpoint}`;
+    };
+
+    const defaultFetch = async (endpoint) => {
+      const url = buildApiUrl(endpoint);
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return response.json();
+    };
+
+    const fetcher =
+      typeof fallbackFetch === "function"
+        ? fallbackFetch
+        : typeof config.fetchApiData === "function"
+        ? (endpoint) => config.fetchApiData(endpoint)
+        : defaultFetch;
+
+    const resolver =
+      typeof fallbackResolveMediaUrl === "function"
+        ? fallbackResolveMediaUrl
+        : typeof config.resolveMediaUrl === "function"
+        ? (assetPath) => config.resolveMediaUrl(assetPath)
+        : fallbackResolver;
+
+    const getDefaultAsset = (key) => {
+      if (fallbackAssets[key]) return fallbackAssets[key];
+      if (
+        config.defaultAssets &&
+        typeof config.defaultAssets === "object" &&
+        config.defaultAssets[key]
+      ) {
+        return config.defaultAssets[key];
+      }
+      return DEFAULT_ASSETS[key] || "";
+    };
+
+    return {
+      fetchApiData: fetcher,
+      resolveMediaUrl: resolver,
+      getDefaultAsset,
+      withDefault(assetPath, key) {
+        const resolved = assetPath ? resolver(assetPath) : "";
+        return resolved || getDefaultAsset(key);
+      },
+      buildApiUrl,
+      get defaults() {
+        const configDefaults =
+          config.defaultAssets && typeof config.defaultAssets === "object"
+            ? config.defaultAssets
+            : {};
+        return { ...DEFAULT_ASSETS, ...configDefaults, ...fallbackAssets };
+      },
+      getApiBaseUrl() {
+        return buildApiUrl("");
+      },
+      getConfig: () => config,
+    };
+  };
+
   const fallbackFetch = async (endpoint) => {
     const config = safeConfig();
 
@@ -115,7 +194,7 @@
     return `${normalizedBase}${normalizedEndpoint}`;
   };
 
-  global.RaynuClient = {
+  const RaynuClient = {
     getConfig: () => safeConfig(),
     fetchApiData: (endpoint) =>
       ensureFunction(safeConfig().fetchApiData, fallbackFetch)(endpoint),
@@ -132,5 +211,73 @@
           : {};
       return { ...DEFAULT_ASSETS, ...configuredDefaults };
     },
+  };
+
+  RaynuClient.createAdapter = function createAdapter(options = {}) {
+    const fallbackAdapter = createFallbackAdapter(options);
+    const client = this;
+
+    return {
+      fetchApiData: ensureFunction(
+        client.fetchApiData,
+        fallbackAdapter.fetchApiData
+      ),
+      resolveMediaUrl: ensureFunction(
+        client.resolveMediaUrl,
+        fallbackAdapter.resolveMediaUrl
+      ),
+      getDefaultAsset(key) {
+        const fromClient =
+          typeof client.getDefaultAsset === "function"
+            ? client.getDefaultAsset(key)
+            : undefined;
+        return fromClient || fallbackAdapter.getDefaultAsset(key);
+      },
+      withDefault(assetPath, key) {
+        if (typeof client.withDefault === "function") {
+          const result = client.withDefault(assetPath, key);
+          if (result) return result;
+        }
+        return fallbackAdapter.withDefault(assetPath, key);
+      },
+      buildApiUrl(endpoint = "") {
+        if (typeof client.buildApiUrl === "function") {
+          return client.buildApiUrl(endpoint);
+        }
+        return fallbackAdapter.buildApiUrl(endpoint);
+      },
+      get defaults() {
+        return { ...fallbackAdapter.defaults, ...(client.defaults || {}) };
+      },
+      getApiBaseUrl() {
+        if (typeof client.getApiBaseUrl === "function") {
+          return client.getApiBaseUrl();
+        }
+        return fallbackAdapter.getApiBaseUrl();
+      },
+      getConfig() {
+        if (typeof client.getConfig === "function") {
+          return client.getConfig();
+        }
+        return fallbackAdapter.getConfig();
+      },
+      get client() {
+        return client;
+      },
+      get fallback() {
+        return fallbackAdapter;
+      },
+    };
+  };
+
+  global.RaynuClient = RaynuClient;
+  global.getRaynuAdapter = function getRaynuAdapter(options = {}) {
+    if (
+      global.RaynuClient &&
+      typeof global.RaynuClient.createAdapter === "function"
+    ) {
+      return global.RaynuClient.createAdapter(options);
+    }
+    return createFallbackAdapter(options);
   };
 })(window);

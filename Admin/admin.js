@@ -5,58 +5,113 @@ document.addEventListener("DOMContentLoaded", () => {
     // =================================================================
     // --- 1. CONFIGURACIÓN Y ESTADO GLOBAL ---
     // =================================================================
-    const client = window.RaynuClient || null;
-    const baseConfig =
-      (client && typeof client.getConfig === "function"
-        ? client.getConfig()
-        : window.__RAYNU_CONFIG__) || {};
-
-    const fallbackAssets = {
-      casterPhoto: "../Image/caster.png",
+    const adapterOptions = {
+      fallbackAssets: {
+        casterPhoto: "../Image/caster.png",
+      },
     };
 
-    const buildApiUrl =
-      client && typeof client.buildApiUrl === "function"
-        ? (endpoint = "") => client.buildApiUrl(endpoint)
-        : (endpoint = "") => {
-            const rawBase =
-              typeof baseConfig.apiBaseUrl === "string" &&
-              baseConfig.apiBaseUrl.trim()
-                ? baseConfig.apiBaseUrl.trim()
-                : "https://api.raynucommunitytournament.xyz/api";
-            const normalizedBase = rawBase.endsWith("/")
-              ? rawBase.slice(0, -1)
-              : rawBase;
-            if (!endpoint) return normalizedBase;
-            const normalizedEndpoint = endpoint.startsWith("/")
-              ? endpoint
-              : `/${endpoint}`;
-            return `${normalizedBase}${normalizedEndpoint}`;
-          };
+    const createLocalAdapter = () => {
+      const config = window.__RAYNU_CONFIG__ || {};
+      const fallbackAssets = adapterOptions.fallbackAssets;
 
-    const resolveMediaUrl =
-      client && typeof client.resolveMediaUrl === "function"
-        ? (assetPath) => client.resolveMediaUrl(assetPath)
-        : typeof baseConfig.resolveMediaUrl === "function"
-          ? (assetPath) => baseConfig.resolveMediaUrl(assetPath)
+      const buildApiUrl = (endpoint = "") => {
+        const rawBase =
+          (typeof config.apiBaseUrl === "string" && config.apiBaseUrl.trim()) ||
+          "https://api.raynucommunitytournament.xyz/api";
+        const normalizedBase = rawBase.endsWith("/")
+          ? rawBase.slice(0, -1)
+          : rawBase;
+        if (!endpoint) return normalizedBase;
+        const normalizedEndpoint = endpoint.startsWith("/")
+          ? endpoint
+          : `/${endpoint}`;
+        return `${normalizedBase}${normalizedEndpoint}`;
+      };
+
+      const resolveMediaUrl =
+        typeof config.resolveMediaUrl === "function"
+          ? (assetPath) => config.resolveMediaUrl(assetPath)
           : (assetPath) => assetPath || "";
 
-    const getDefaultAsset = (key) => {
-      if (client && typeof client.getDefaultAsset === "function") {
-        const value = client.getDefaultAsset(key);
-        if (value) return value;
-      }
-      return fallbackAssets[key] || "";
+      const getDefaultAsset = (key) => {
+        const fromConfig =
+          config.defaultAssets && config.defaultAssets[key]
+            ? config.defaultAssets[key]
+            : undefined;
+        return fromConfig || fallbackAssets[key] || "";
+      };
+
+      return {
+        fetchApiData:
+          typeof config.fetchApiData === "function"
+            ? (endpoint) => config.fetchApiData(endpoint)
+            : async (endpoint) => {
+                const response = await fetch(buildApiUrl(endpoint));
+                if (!response.ok) {
+                  throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+              },
+        resolveMediaUrl,
+        getDefaultAsset,
+        withDefault(assetPath, key) {
+          const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+          return resolved || getDefaultAsset(key);
+        },
+        buildApiUrl,
+        getApiBaseUrl: () => buildApiUrl(""),
+        get defaults() {
+          return { ...fallbackAssets, ...(config.defaultAssets || {}) };
+        },
+        getConfig: () => config,
+      };
     };
 
-    const withDefaultAsset =
-      client && typeof client.withDefault === "function"
-        ? (assetPath, key) =>
-            client.withDefault(assetPath, key) || getDefaultAsset(key)
-        : (assetPath, key) => {
-            const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
-            return resolved || getDefaultAsset(key);
-          };
+    const adapter =
+      typeof window.getRaynuAdapter === "function"
+        ? window.getRaynuAdapter(adapterOptions)
+        : createLocalAdapter();
+
+    const baseConfig =
+      (typeof adapter.getConfig === "function"
+        ? adapter.getConfig()
+        : window.__RAYNU_CONFIG__) || {};
+
+    const buildApiUrl = (endpoint = "") => {
+      if (typeof adapter.buildApiUrl === "function") {
+        return adapter.buildApiUrl(endpoint);
+      }
+      return endpoint;
+    };
+
+    const resolveMediaUrl = (assetPath) => {
+      if (typeof adapter.resolveMediaUrl === "function") {
+        return adapter.resolveMediaUrl(assetPath);
+      }
+      if (typeof baseConfig.resolveMediaUrl === "function") {
+        return baseConfig.resolveMediaUrl(assetPath);
+      }
+      return assetPath || "";
+    };
+
+    const getDefaultAsset = (key) => {
+      if (typeof adapter.getDefaultAsset === "function") {
+        const value = adapter.getDefaultAsset(key);
+        if (value) return value;
+      }
+      const defaults = adapter.defaults || adapterOptions.fallbackAssets;
+      return (defaults && defaults[key]) || adapterOptions.fallbackAssets[key] || "";
+    };
+
+    const withDefaultAsset = (assetPath, key) => {
+      if (typeof adapter.withDefault === "function") {
+        const value = adapter.withDefault(assetPath, key);
+        if (value) return value;
+      }
+      const resolved = assetPath ? resolveMediaUrl(assetPath) : "";
+      return resolved || getDefaultAsset(key);
+    };
 
     const config = {
       API_URL: buildApiUrl(),
