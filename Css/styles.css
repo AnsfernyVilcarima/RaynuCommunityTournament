@@ -1719,7 +1719,7 @@ h2 i {
 
 @media (min-width: 992px) {
   .streams-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
